@@ -7,7 +7,7 @@
                 Select File
             </btn>
         </template>
-        <btn color="#0D5661" text-color="#FFFFFB" class="ml-2 bg-kamenozoki-200" @click="submitUpload">
+        <btn color="#0D5661" text-color="#FFFFFB" class="ml-2 bg-kamenozoki-300" @click="submitUpload">
             upload
         </btn>
     </el-upload>

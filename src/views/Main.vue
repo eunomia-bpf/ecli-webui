@@ -1,59 +1,56 @@
 <template>
     <div class="flex h-screen w-screen bg-customBg-100 p-3 relative">
-        <div class="flex-none w-10">
-            side bar
+        <div class="flex w-8 mr-2 items-start justify-center">
+            <div class="whitespace-nowrap -rotate-90 transform mt-32 text-zinc-400 text-3xl">
+                eunomia-bpf playground
+            </div>
+
         </div>
-        <div class="grid grid-cols-6 flex-auto gap-2">
+        <div class="grid grid-cols-6 gap-2 w-full">
 
             <!-- LEFT SIDE -->
-            <div class="col-span-2">
-                <div class="grid grid-rows-4 w-full h-full gap-2">
-                    <div class="row-span-1 bg-white flex flex-col rounded-md">
-                        <ttl>
-                            Server
+            <div class="col-span-2 grid grid-rows-4 w-full h-full gap-2">
+                <div class="row-span-1 bg-white flex flex-col rounded-md">
+                    <ttl>
+                        Server
 
-                            <template #extra>
-                                <n-popover trigger="hover">
-                                    <template #trigger>
-                                        <n-button text>
-                                            <n-icon size="20" color="#255359">
-                                                <Add12Regular />
-                                            </n-icon>
-                                        </n-button>
-                                    </template>
-                                    <span>Add Server</span>
-                                </n-popover>
-                            </template>
-                        </ttl>
+                        <template #extra>
+                            <n-popover trigger="hover">
+                                <template #trigger>
+                                    <n-button text>
+                                        <n-icon size="20" color="#255359">
+                                            <Add12Regular />
+                                        </n-icon>
+                                    </n-button>
+                                </template>
+                                <span>Add Server</span>
+                            </n-popover>
+                        </template>
+                    </ttl>
 
-                        <div class="w-full h-40 flex-grow overflow-y-auto rounded-md p-2 mt-2">
-                            <serverItem :state="serverStateConnected">foo bar</serverItem>
-                            <serverItem :state="serverStateDisconnected">foo bar</serverItem>
-                            <serverItem :state="serverStateConnected">foo bar</serverItem>
-                            <serverItem :state="serverStateDisconnected">foo bar</serverItem>
-                        </div>
+                    <div class="w-full h-4 flex-grow overflow-y-auto rounded-md p-2 mt-2">
+                        <ul class="w-full">
+                            <li v-for="s in servers" :key="s.name">
+                                <serverItem :name="s.name" :url="s.url" @changeSelectedSrv="updateOnServer" />
+                                <!--TODO: ADD LISTEN TASK OP-->
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+
+                <div class="row-span-3 bg-white rounded-md flex flex-col">
+                    <ttl>Program</ttl>
+                    <div class="h-44 flex-grow overflow-auto rounded-md p-2 mb-1 mt-2 flex">
+                        <ul class="list-none w-10 flex-grow">
+                            <li v-for="t in servers[0].tasks" :key="t.name">
+                                <progItem :name="t.name" :id="t.id" :status="t.status" />
+                            </li>
+                        </ul>
+
                     </div>
 
 
-                    <div class="row-span-3 bg-white rounded-md flex flex-col">
-                        <ttl>Program</ttl>
-                        <div class="w-full h-44 flex-grow overflow-y-auto rounded-md p-2 mb-1 mt-2">
-                            <progItem>foo bar</progItem>
-                            <progItem>foo bar</progItem>
-                            <progItem>foo bar</progItem>
-                            <progItem>foo bar</progItem>
-                            <progItem>foo bar</progItem>
-                            <progItem>foo bar</progItem>
-                            <progItem>foo bar</progItem>
-                            <progItem>foo bar</progItem>
-                            <progItem>foo bar</progItem>
-                            <progItem>foo bar</progItem>
-                            <progItem>foo bar</progItem>
-                            <progItem>foo bar</progItem>
-                        </div>
-
-
-                    </div>
                 </div>
             </div>
 
@@ -64,8 +61,7 @@
 
                     <upload />
 
-                    <div class="flex justify-end gap-3 h-full w-full px-2">
-
+                    <div class="flex justify-end gap-3 h-full w-full px-2 items-center">
                         <btn :disabled="downloadDisabled" class="bg-kamenozoki-300">Download</btn>
                         <btn :disabled="downloadDisabled" class="bg-kamenozoki-300">Run</btn>
                         <btn class="bg-kamenozoki-300">Compile</btn>
@@ -78,9 +74,9 @@
                 </div>
 
                 <!-- MONACO -->
-                <monacoEditor class="bg-white px-1 rounded-b-md mb-1 h-full" v-model="editingValue" :language="language"
-                    :hight-change="hightChange" width="100%" height="100%" @editor-mounted="editorMounted"
-                    :read-only="editorRO" />
+                <monacoEditor class="bg-white px-1 rounded-b-md mb-1 h-3/5 flex-grow" v-model="editingValue"
+                    :language="language" :hight-change="hightChange" width="100%" height="100%"
+                    @editor-mounted="editorMounted" :read-only="editorRO" />
 
                 <!-- CONSOLE -->
                 <div class="bg-slate-50 w-full h-1/5 rounded-md flex flex-col">
@@ -101,7 +97,7 @@
                     </ttl>
 
                     <div class="w-full h-4 overflow-auto px-1 flex-grow rounded-md">
-                        <csl :ctx="testn" at="test" />
+                        <csl :ctx="consoleCtx" at="test" />
                     </div>
 
                 </div>
@@ -113,7 +109,7 @@
 
 
 <script setup lang="ts">
-import { ref, type Ref } from 'vue';
+import { reactive, ref, type Ref, watch, onBeforeUnmount, onMounted } from 'vue';
 import monacoEditor from '../components/MonacoEditor.vue'
 import btn from '../components/Button.vue'
 import { Add12Regular, Archive48Regular } from '@vicons/fluent'
@@ -123,32 +119,25 @@ import progItem from '../components/ProgItem.vue'
 import serverItem from '../components/ServerItem.vue'
 import upload from '../components/Upload.vue'
 import tab from '../components/Tab.vue'
-import { State } from '../components/serverState'
+import { Server, Task } from '../components/serverInfo'
+import { ecliApi } from '@/api'
 
-let serverStateConnected = ref<State>(State.Connected);
-let serverStateDisconnected = ref<State>(State.Disconnected);
 
-let sourceFileList = ref<string[]>([]);
-let selectedSourceFile = ref<string>('');
 
-let testn = ref<string>(`> sudo btrfs subvol show /nix
-nix
-	Name: 			nix
-	UUID: 			4253cd61-4899-334d-9b6d-16b2fd21278a
-	Parent UUID: 		-
-	Received UUID: 		-
-	Creation time: 		2022-05-26 14:32:15 +0800
-	Subvolume ID: 		258
-	Generation: 		3446860
-	Gen at creation: 	8
-	Parent ID: 		5
-	Top level ID: 		5
-	Flags: 			-
-	Send transid: 		0
-	Send time: 		2022-05-26 14:32:15 +0800
-	Receive transid: 	0
-	Receive time: 		-
-	Snapshot(s):`);
+
+let servers = reactive([new Server('Local', 'http://127.0.0.1:8527')]);
+
+
+
+let consoleCtx = ref<string>(`clang-11: warning: argument unused during compilation: '--gcc-toolchain=/nix/store/1x1q5sqa0ilbi8fz7aayk02pjy5g7jhh-gcc-12.3.0' [-Wunused-command-line-argument]
+skeleton/profiler.bpf.c:40:14: error: A call to built-in function '__stack_chk_fail' is not supported.
+int BPF_PROG(fentry_XXX)
+             ^
+skeleton/profiler.bpf.c:94:14: error: A call to built-in function '__stack_chk_fail' is not supported.
+int BPF_PROG(fexit_XXX)
+             ^
+2 errors generated.
+make: *** [Makefile:204: profiler.bpf.o] Error 1`);
 
 
 
@@ -166,7 +155,33 @@ const editorMounted = (editor: any) => {
     console.log('editor load complete', editor)
 }
 
+let timer: number;
 
+const updateTasksOfServers = async () => {
+    servers.forEach(async (s) => {
+        await s.updateTasks();
+    });
+};
+
+// update Tasks List
+watch(() => servers, updateTasksOfServers, { deep: true });
+
+onBeforeUnmount(() => {
+    clearInterval(timer);
+});
+
+onMounted(() => {
+    updateTasksOfServers();
+    timer = setInterval(updateTasksOfServers, 5000);
+});
+
+// handle program
+
+let onServer = ref('');
+const updateOnServer = (name: string) => {
+    onServer.value = name;
+    console.log(`Selected Server Updated -> ${onServer.value}`);
+};
 
 </script>
 

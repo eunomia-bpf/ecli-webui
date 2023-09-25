@@ -14,6 +14,12 @@ State manage: `Pinia`
 pnpm install
 ```
 
+## Generate OpenAPI codes
+
+```sh
+pnpm run gen-api
+```
+
 ### Compile and Hot-Reload for Development
 
 ```sh
