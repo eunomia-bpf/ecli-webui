@@ -7,12 +7,14 @@ import Components from 'unplugin-vue-components/vite'
 import AutoImport from 'unplugin-auto-import/vite'
 import { NaiveUiResolver } from 'unplugin-vue-components/resolvers'
 import { ElementPlusResolver } from 'unplugin-vue-components/resolvers'
+import { comlink } from 'vite-plugin-comlink'
 
 const proxyAddr: string = 'http://127.0.0.1:8527'
 
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [
+    comlink(),
     vue(),
     AutoImport({
       resolvers: [ElementPlusResolver()],
@@ -45,6 +47,8 @@ export default defineConfig({
       'api': fileURLToPath(new URL('./api-client', import.meta.url)),
       'quicknode': fileURLToPath(new URL('./emception/build/quicknode', import.meta.url)),
       'llvm': fileURLToPath(new URL('./emception/build/llvm/bin', import.meta.url)),
+      'wasm': fileURLToPath(new URL('./wasm-bin', import.meta.url)),
+
     }
 
   },
@@ -53,6 +57,8 @@ export default defineConfig({
     rollupOptions: {
       external: [
         /\.mjs$/,
+        'wasm-bin/clang'
+
       ]
     }
   },
@@ -66,5 +72,10 @@ export default defineConfig({
       },
     },
   },
+  worker: {
+    plugins: [
+      comlink()
+    ]
+  }
 }
 )

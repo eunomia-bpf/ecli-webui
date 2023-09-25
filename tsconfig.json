@@ -1,5 +1,11 @@
 {
   "files": [],
+  "types": [
+    {
+      "name": "types/emscripten",
+      "path": "./node_modules/@types/emscripten/index.d.ts"
+    },
+  ],
   "references": [
     {
       "path": "./tsconfig.node.json"
@@ -13,8 +19,10 @@
   ],
   "compilerOptions": {
     "allowJs": true,
+    "noImplicitAny": false,
     "types": [
       "naive-ui/volar",
+      "types/emscripten",
     ],
     "module": "NodeNext",
   },
