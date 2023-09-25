@@ -1,16 +1,16 @@
 import * as Comlink from "comlink";
 
-
-
 import FileSystem from "emception/FileSystem.mjs";
+
 import LlvmBoxProcess from "emception/LlvmBoxProcess.mjs";
 import BinaryenBoxProcess from "emception/BinaryenBoxProcess.mjs";
 import Python3Process from "emception/Python3Process.mjs";
 import NodeProcess from "emception/QuickNodeProcess.mjs";
-import root_pack from "../../emception/build/emception/root_pack.mjs";
-import lazy_cache from "emception/lazy-cache/index.mjs";
 
-export default class Emception {
+import root_pack from "emception/root_pack.mjs";
+import lazy_cache from "emception/lazy-cache/index.mjs";
+export default Emception;
+class Emception {
     fileSystem = null;
     tools = {};
 
@@ -45,7 +45,7 @@ export default class Emception {
         };
         this.tools = tools;
 
-        for (const tool in tools) {
+        for (let tool in tools) {
             await tools[tool];
         }
     }
@@ -55,7 +55,7 @@ export default class Emception {
     onstdout = () => { };
     onstderr = () => { };
 
-    run(...args: any[]) {
+    run(...args) {
         if (args.length == 1) args = args[0].split(/ +/);
         args = [
             "/usr/bin/python",

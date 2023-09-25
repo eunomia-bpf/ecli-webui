@@ -15,12 +15,12 @@
 
             <div class="flex items-center w-full justify-end mr-2 gap-3">
 
-                <div class="px-3 text-xl rounded-xl bg-moss-100 py-1" v-if="!isPaused">
+                <div class="px-3 text-xl rounded-xl bg-moss-100 py-1" v-if="!pausedStatus">
                     <p class="text-empress-600">
                         Running
                     </p>
                 </div>
-                <div class="px-3 text-xl rounded-xl bg-tumbleweed-200 py-1 mr-1" v-if="isPaused">
+                <div class="px-3 text-xl rounded-xl bg-tumbleweed-200 py-1 mr-1" v-if="pausedStatus">
                     <p class="text-empress-600">
                         Paused
                     </p>
@@ -31,8 +31,8 @@
                     <template #trigger>
                         <btn @click="pauseOrResumeTask" text>
                             <n-icon size="20" color="#255359">
-                                <Pause16Regular v-if="!isPaused" />
-                                <Play16Regular v-if="isPaused" />
+                                <Pause16Regular v-if="!pausedStatus" />
+                                <Play16Regular v-if="pausedStatus" />
                             </n-icon>
                         </btn>
                     </template>
@@ -70,10 +70,10 @@
 <script setup lang="ts">
 import { Open16Regular, Pause16Regular, Play16Regular } from '@vicons/fluent'
 import { X } from '@vicons/tabler'
-import { computed, ref } from 'vue'
-import btn from './Button.vue'
+import { computed, onMounted, ref, type Ref } from 'vue'
+import btn from './GeneralBtn.vue'
 import { ecliApi } from '@/api'
-import { TaskStatus } from './serverInfo'
+import { TaskStatus } from '@/api-client'
 
 // {"tasks":[{"status":"running","id":1,"name":"bpf-program-1693148745"}]}
 
@@ -88,20 +88,35 @@ let emits = defineEmits<{
     (e: 'changeLogTask', id: number): void
 }>()
 
-let isUserPaused = ref(props.status === TaskStatus.Paused);
+let rawPausedStatus = ref(props.status === TaskStatus.Paused);
+
+let pausedStatus = computed({
+    get() {
+        return rawPausedStatus.value;
+    },
+    set(n) {
+        rawPausedStatus.value = n;
+    }
+})
+
+
+onMounted(() => {
+    console.log(props.id + "now " + pausedStatus.value);
+});
 
 const pauseOrResumeTask = async () => {
-    isUserPaused.value = !isUserPaused.value;
-    if (isUserPaused.value) {
+
+    console.log("task with id: " + props.id + " is paused: " + pausedStatus.value);
+    if (pausedStatus.value) {
         await ecliApi.resumeTaskByID({ id: props.id });
-        console.log('try resuming task ' + props.id);
+        console.log('resuming task ' + props.id);
     } else {
-        console.log('try pausing task ' + props.id);
         await ecliApi.pauseTaskByID({ id: props.id });
+        console.log('pausing task ' + props.id);
     }
+    pausedStatus.value = !pausedStatus.value;
 };
 
-let isPaused = computed(() => props.status === TaskStatus.Paused);
 
 const stopTask = async () => {
     console.log('try stopping task ' + props.id);

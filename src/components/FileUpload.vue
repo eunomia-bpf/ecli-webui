@@ -11,7 +11,7 @@
             upload
         </btn>
     </el-upload>
-    <btn color="#961b3c" text-color="#FFFFFB" class="ml-2 bg-mandy-700" @click="clearFiles">
+    <btn color="#961b3c" text-color="#FFFFFB" class="ml-2 bg-mandy-600" @click="clearFiles">
         Clean
     </btn>
 </template>
@@ -20,7 +20,7 @@
 import { ref } from 'vue'
 import { genFileId } from 'element-plus'
 import type { UploadInstance, UploadProps, UploadRawFile } from 'element-plus'
-import btn from './Button.vue'
+import btn from './GeneralBtn.vue'
 
 
 
@@ -42,4 +42,3 @@ const clearFiles = () => {
 }
 
 </script>
-  
