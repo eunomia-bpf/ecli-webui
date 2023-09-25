@@ -45,7 +45,7 @@ export default class Emception {
         };
         this.tools = tools;
 
-        for (let tool in tools) {
+        for (const tool in tools) {
             await tools[tool];
         }
     }

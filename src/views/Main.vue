@@ -41,10 +41,10 @@
 
                 <div class="row-span-3 bg-white rounded-md flex flex-col">
                     <ttl>Program</ttl>
-                    <div class="h-44 flex-grow overflow-auto rounded-md p-2 mb-1 mt-2 flex">
+                    <div class="h-44 flex-grow overflow-auto rounded-md mb-1 mt-2 flex">
                         <ul class="list-none w-10 flex-grow">
                             <li v-for="t in servers[0].tasks" :key="t.name">
-                                <progItem :name="t.name" :id="t.id" :status="t.status" />
+                                <progItem :name="t.name" :id="t.id" :status="t.status" @change-log-task="updateOnLogTask" />
                             </li>
                         </ul>
 
@@ -69,7 +69,7 @@
                 </div>
 
                 <!-- TABS -->
-                <div class="h-8 rounded-t-md overflow-x-auto bg-white flex items-center">
+                <div class="h-18 rounded-t-md overflow-x-auto bg-white flex items-center">
                     <tab />
                 </div>
 
@@ -129,7 +129,7 @@ let servers = reactive([new Server('Local', 'http://127.0.0.1:8527')]);
 
 
 
-let consoleCtx = ref<string>(`clang-11: warning: argument unused during compilation: '--gcc-toolchain=/nix/store/1x1q5sqa0ilbi8fz7aayk02pjy5g7jhh-gcc-12.3.0' [-Wunused-command-line-argument]
+let consoleCtx: Ref<string> = ref(`clang-11: warning: argument unused during compilation: '--gcc-toolchain=/nix/store/1x1q5sqa0ilbi8fz7aayk02pjy5g7jhh-gcc-12.3.0' [-Wunused-command-line-argument]
 skeleton/profiler.bpf.c:40:14: error: A call to built-in function '__stack_chk_fail' is not supported.
 int BPF_PROG(fentry_XXX)
              ^
@@ -178,10 +178,33 @@ onMounted(() => {
 // handle program
 
 let onServer = ref('');
+
+
 const updateOnServer = (name: string) => {
     onServer.value = name;
     console.log(`Selected Server Updated -> ${onServer.value}`);
 };
+
+let onLogTask: Ref<number> = ref(0);
+
+const updateOnLogTask = (id: number) => {
+    onLogTask.value = id;
+    console.log(`Selected Task Updated -> ${onLogTask.value}`);
+};
+
+const updateLogCtx = async () => {
+    servers[0].tasks.forEach(async (t) => {
+        if (t.id === onLogTask.value) {
+            console.log(`Updating Log Context for ${t.name}`);
+            ecliApi.getTaskLogByID({ id: t.id }).then((log) => {
+                console.log(log);
+                // consoleCtx.value = log[0;
+            });
+        }
+    });
+}
+
+watch(() => onLogTask, updateLogCtx, { deep: true });
 
 </script>
 

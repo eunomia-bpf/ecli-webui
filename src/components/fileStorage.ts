@@ -42,8 +42,8 @@ export class FileStorage {
     async writeToVirtualFS() {
         const fileNames = this.getFileNames();
         for (let i = 0; i < fileNames.length; i++) {
-            let perName = fileNames[i];
-            let perCtx = await this.getFileContent(perName);
+            const perName = fileNames[i];
+            const perCtx = await this.getFileContent(perName);
 
             await emception.fileSystem.writeFile(`/working/${perName}`, perCtx);
         }
