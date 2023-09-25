@@ -127,13 +127,7 @@ import { Server, } from '../components/serverInfo'
 import { ecliApi } from '@/api'
 import tabItem from '../components/TabItem.vue';
 
-// import * as Comlink from "comlink";
-
-// import EmceptionWorker from "../components/clang/emception.worker.js";
-
-// const emception = Comlink.wrap(new EmceptionWorker());
-
-
+import Module from 'wasm-bin/clang';
 
 let servers = reactive([new Server('Local', 'http://127.0.0.1:8527')]);
 

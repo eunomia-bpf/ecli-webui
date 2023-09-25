@@ -9,7 +9,7 @@ import NodeProcess from "emception/QuickNodeProcess.mjs";
 
 import root_pack from "emception/root_pack.mjs";
 import lazy_cache from "emception/lazy-cache/index.mjs";
-export default Emception;
+
 class Emception {
     fileSystem = null;
     tools = {};
@@ -123,6 +123,6 @@ class Emception {
     };
 }
 
-const emception = new Emception();
-globalThis.emception = emception;
-Comlink.expose(emception);
+export default Emception;
+
+

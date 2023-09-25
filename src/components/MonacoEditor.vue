@@ -93,7 +93,6 @@ export default defineComponent({
     width: 100%;
     flex: 1;
     min-height: 100px;
-    // height: 200px;
     overflow-y: auto;
 }
 

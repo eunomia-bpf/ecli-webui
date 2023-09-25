@@ -2,6 +2,7 @@
   "extends": "@vue/tsconfig/tsconfig.dom.json",
   "include": [
     "env.d.ts",
+    "wasm-clang.d.ts",
     "src/**/*",
     "src/**/*.vue",
     "monaco-editor-vue3.d.ts",
