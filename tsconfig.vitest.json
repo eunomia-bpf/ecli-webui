@@ -1,0 +1,16 @@
+{
+  "extends": "./tsconfig.app.json",
+  "exclude": [
+    "src/**/*.ts", // Add any TypeScript files you have in the src directory
+    "src/**/*.d.ts", // Include declaration files if applicable
+    "src/**/*.vue"
+  ],
+  "compilerOptions": {
+    "composite": true,
+    "lib": [],
+    "types": [
+      "node",
+      "jsdom"
+    ]
+  }
+}
