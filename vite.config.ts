@@ -8,7 +8,7 @@ import AutoImport from 'unplugin-auto-import/vite'
 import { NaiveUiResolver } from 'unplugin-vue-components/resolvers'
 import { ElementPlusResolver } from 'unplugin-vue-components/resolvers'
 
-let proxyAddr: string = 'http://127.0.0.1:8527'
+const proxyAddr: string = 'http://127.0.0.1:8527'
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -42,8 +42,8 @@ export default defineConfig({
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url)),
-      'emception': fileURLToPath(new URL('./emception/build/emception', import.meta.url)),
-      'api': fileURLToPath(new URL('./api-generate', import.meta.url)),
+      // 'emception': fileURLToPath(new URL('./emception/build/emception', import.meta.url)),
+      'api': fileURLToPath(new URL('./api-client', import.meta.url)),
     }
 
   },
@@ -53,13 +53,11 @@ export default defineConfig({
 
   server: {
     proxy: {
-
       '/api': {
         target: `${proxyAddr}`,
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/api/, ''),
       },
-
     },
   },
 }

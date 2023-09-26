@@ -5,9 +5,10 @@
         </n-icon>
         <div class="flex items-center flex-col h-full">
             <div class="font-sans items-center pt-px font-normal whitespace-nowrap text-xl">
-                <slot></slot>
+                <p class="text-empress-900">
+                    <slot></slot>
+                </p>
             </div>
-
         </div>
 
         <div class="flex items-center w-full justify-end mr-1">

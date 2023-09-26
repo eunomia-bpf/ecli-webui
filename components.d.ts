@@ -9,6 +9,8 @@ declare module 'vue' {
   export interface GlobalComponents {
     Button: typeof import('./src/components/Button.vue')['default']
     Console: typeof import('./src/components/Console.vue')['default']
+    ElTabPane: typeof import('element-plus/es')['ElTabPane']
+    ElTabs: typeof import('element-plus/es')['ElTabs']
     ElUpload: typeof import('element-plus/es')['ElUpload']
     MonacoEditor: typeof import('./src/components/MonacoEditor.vue')['default']
     NButton: typeof import('naive-ui')['NButton']
