@@ -48,7 +48,7 @@
 
 <script setup lang="ts">
 import {
-    Edit16Regular, ArrowClockwise16Regular,
+    Edit16Regular,
     PlugDisconnected20Regular,
 } from '@vicons/fluent'
 import { X } from '@vicons/tabler'
@@ -74,10 +74,12 @@ onMounted(() => {
     timer = setInterval(checkConnection, 5000);
 });
 
+import { ecliApi } from '@/api'
+
 const checkConnection = async () => {
     try {
-        const response = await fetch(`/api/task`);
-        const data = await response.json();
+        const resp = await ecliApi.getTaskList();
+        const data = resp.data;
         isConnected.value = "tasks" in data;
         console.log(data)
     } catch (error) {

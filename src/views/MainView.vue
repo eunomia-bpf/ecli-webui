@@ -63,14 +63,19 @@
 
                     <div class="flex justify-end gap-3 h-full w-full px-2 items-center">
                         <btn :disabled="downloadDisabled" class="bg-kamenozoki-300">Download</btn>
-                        <btn :disabled="downloadDisabled" class="bg-kamenozoki-300">Run</btn>
+                        <btn :disabled="downloadDisabled" class="bg-kamenozoki-300" @click="startProgram">Run</btn>
                         <btn class="bg-kamenozoki-300">Compile</btn>
                     </div>
                 </div>
 
                 <!-- TABS -->
-                <div class="h-18 rounded-t-md overflow-x-auto bg-white flex items-center">
-                    <tab />
+                <div class="h-12 rounded-t-md overflow-x-auto bg-white flex items-center pb-3">
+                    <div class="flex justify-start px-1 h-full items-center flex-grow gap-1">
+                        <tabItem name="foob"></tabItem>
+                        <tabItem name="foob"></tabItem>
+                        <tabItem name="foob"></tabItem>
+
+                    </div>
                 </div>
 
                 <!-- MONACO -->
@@ -85,7 +90,7 @@
                         <template #extra>
                             <n-popover trigger="hover">
                                 <template #trigger>
-                                    <n-button text>
+                                    <n-button text @click="cleanConsole">
                                         <n-icon size="20" color="#255359">
                                             <Archive48Regular />
                                         </n-icon>
@@ -96,8 +101,8 @@
                         </template>
                     </ttl>
 
-                    <div class="w-full h-4 overflow-auto px-1 flex-grow rounded-md">
-                        <csl :ctx="consoleCtx" at="test" />
+                    <div class="w-full h-4 overflow-x-auto px-1 flex-grow rounded-md">
+                        <csl :ctx="consoleCtx" at="logAt" />
                     </div>
 
                 </div>
@@ -111,34 +116,34 @@
 <script setup lang="ts">
 import { reactive, ref, type Ref, watch, onBeforeUnmount, onMounted } from 'vue';
 import monacoEditor from '../components/MonacoEditor.vue'
-import btn from '../components/Button.vue'
+import btn from '../components/GeneralBtn.vue'
 import { Add12Regular, Archive48Regular } from '@vicons/fluent'
-import ttl from '../components/Title.vue'
-import csl from '../components/Console.vue'
+import ttl from '../components/HeadTitle.vue'
+import csl from '../components/TheConsole.vue'
 import progItem from '../components/ProgItem.vue'
 import serverItem from '../components/ServerItem.vue'
-import upload from '../components/Upload.vue'
-import tab from '../components/Tab.vue'
-import { Server, Task } from '../components/serverInfo'
+import upload from '../components/FileUpload.vue'
+import { Server, } from '../components/serverInfo'
 import { ecliApi } from '@/api'
+import tabItem from '../components/TabItem.vue';
 
+// import * as Comlink from "comlink";
+
+// import EmceptionWorker from "../components/clang/emception.worker.js";
+
+// const emception = Comlink.wrap(new EmceptionWorker());
 
 
 
 let servers = reactive([new Server('Local', 'http://127.0.0.1:8527')]);
 
+const initialConsoleValue = ['select a program to view logs'];
 
+let consoleCtx: Ref<string[]> = ref(initialConsoleValue);
 
-let consoleCtx: Ref<string> = ref(`clang-11: warning: argument unused during compilation: '--gcc-toolchain=/nix/store/1x1q5sqa0ilbi8fz7aayk02pjy5g7jhh-gcc-12.3.0' [-Wunused-command-line-argument]
-skeleton/profiler.bpf.c:40:14: error: A call to built-in function '__stack_chk_fail' is not supported.
-int BPF_PROG(fentry_XXX)
-             ^
-skeleton/profiler.bpf.c:94:14: error: A call to built-in function '__stack_chk_fail' is not supported.
-int BPF_PROG(fexit_XXX)
-             ^
-2 errors generated.
-make: *** [Makefile:204: profiler.bpf.o] Error 1`);
-
+const cleanConsole = async () => {
+    consoleCtx.value = initialConsoleValue;
+}
 
 
 let editorRO: Ref<boolean> = ref(false);
@@ -197,14 +202,31 @@ const updateLogCtx = async () => {
         if (t.id === onLogTask.value) {
             console.log(`Updating Log Context for ${t.name}`);
             ecliApi.getTaskLogByID({ id: t.id }).then((log) => {
-                console.log(log);
-                // consoleCtx.value = log[0;
+                // log.data[0] : {
+                //     cursor: number;
+                //     log: { log: string, timestamp: num, log_type: string }
+                // }
+
+                let logCtx = log.data.map((l) => {
+                    let logCtx = l.log;
+                    return logCtx.log;
+                });
+
+                // flush console display
+                consoleCtx.value = logCtx;
+
+                // TODO: follow log
             });
         }
     });
 }
 
-watch(() => onLogTask, updateLogCtx, { deep: true });
+const startProgram = async () => {
+    console.log('starting program');
+    // await ecliApi.startProgram({ server: servers[0].url, program: editingValue.value });
+    // console.log('program started');
+}
+
+watch(onLogTask, updateLogCtx, { deep: true });
 
 </script>
-

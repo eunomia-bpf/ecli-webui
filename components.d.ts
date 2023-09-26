@@ -7,11 +7,10 @@ export {}
 
 declare module 'vue' {
   export interface GlobalComponents {
-    Button: typeof import('./src/components/Button.vue')['default']
-    Console: typeof import('./src/components/Console.vue')['default']
-    ElTabPane: typeof import('element-plus/es')['ElTabPane']
-    ElTabs: typeof import('element-plus/es')['ElTabs']
     ElUpload: typeof import('element-plus/es')['ElUpload']
+    FileUpload: typeof import('./src/components/FileUpload.vue')['default']
+    GeneralBtn: typeof import('./src/components/GeneralBtn.vue')['default']
+    HeadTitle: typeof import('./src/components/HeadTitle.vue')['default']
     MonacoEditor: typeof import('./src/components/MonacoEditor.vue')['default']
     NButton: typeof import('naive-ui')['NButton']
     NIcon: typeof import('naive-ui')['NIcon']
@@ -22,9 +21,7 @@ declare module 'vue' {
     RouterView: typeof import('vue-router')['RouterView']
     ServerItem: typeof import('./src/components/ServerItem.vue')['default']
     ServerOp: typeof import('./src/components/ServerOp.vue')['default']
-    Tab: typeof import('./src/components/Tab.vue')['default']
     TabItem: typeof import('./src/components/TabItem.vue')['default']
-    Title: typeof import('./src/components/Title.vue')['default']
-    Upload: typeof import('./src/components/Upload.vue')['default']
+    TheConsole: typeof import('./src/components/TheConsole.vue')['default']
   }
 }

@@ -42,13 +42,19 @@ export default defineConfig({
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url)),
-      // 'emception': fileURLToPath(new URL('./emception/build/emception', import.meta.url)),
       'api': fileURLToPath(new URL('./api-client', import.meta.url)),
+      'quicknode': fileURLToPath(new URL('./emception/build/quicknode', import.meta.url)),
+      'llvm': fileURLToPath(new URL('./emception/build/llvm/bin', import.meta.url)),
     }
 
   },
   build: {
     chunkSizeWarningLimit: 16000,
+    rollupOptions: {
+      external: [
+        /\.mjs$/,
+      ]
+    }
   },
 
   server: {
