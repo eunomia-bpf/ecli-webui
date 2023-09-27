@@ -18,7 +18,7 @@
 
         <div class="w-full h-4 flex-grow overflow-y-auto rounded-md p-2 mt-2">
             <ul class="w-full">
-                <li v-for="s in props.servers" :key="s.id">
+                <li v-for="s in servers" :key="s.id">
                     <serverItem :name="s.name" :url="s.url" @changeSelectedSrv="updateOnServer" />
                     <!--TODO: ADD LISTEN TASK OP-->
                 </li>
@@ -30,16 +30,11 @@
 
 <script setup lang="ts">
 import ttl from '@/components/HeadTitle.vue'
+import { Add12Regular } from '@vicons/fluent'
+import { inject, type Ref } from 'vue'
+import { Server, } from '../components/serverInfo'
 
-let props = defineProps<{
-    onServerId: number
-    servers: Array<{
-        id: number
-        name: string
-        url: string
-    }>
-}>()
-
+const servers = inject('servers') as Ref<Server[]>
 
 let emit = defineEmits<{
     (e: 'onServerChange', id: number): void

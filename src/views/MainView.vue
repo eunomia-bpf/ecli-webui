@@ -78,10 +78,9 @@
 
 
 <script setup lang="ts">
-import { reactive, ref, type Ref, watch, onBeforeUnmount, onMounted } from 'vue';
-import monacoEditor from '../components/MonacoEditor.vue'
+import { reactive, provide, ref, type Ref, watch, onBeforeUnmount, onMounted } from 'vue';
 import btn from '../components/GeneralBtn.vue'
-import { Add12Regular, Archive48Regular } from '@vicons/fluent'
+import { Archive48Regular } from '@vicons/fluent'
 import ttl from '../components/HeadTitle.vue'
 import csl from '../components/TheConsole.vue'
 import progItem from '../components/ProgItem.vue'
@@ -92,10 +91,9 @@ import EditorField from '../components/EditorField.vue';
 import Module from 'wasm-bin/clang';
 import ServerField from '@/components/ServerField.vue';
 
-
-
-// TODO: passthrough server attr to sub sub components
 let servers = reactive([new Server('Local', 'http://127.0.0.1:8527')]);
+
+provide('servers', servers);
 
 const initialConsoleValue = ['select a program to view logs'];
 
