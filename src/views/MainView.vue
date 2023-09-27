@@ -10,33 +10,9 @@
 
             <!-- LEFT SIDE -->
             <div class="col-span-2 grid grid-rows-4 w-full h-full gap-2">
-                <div class="row-span-1 bg-white flex flex-col rounded-md">
-                    <ttl>
-                        Server
 
-                        <template #extra>
-                            <n-popover trigger="hover">
-                                <template #trigger>
-                                    <n-button text>
-                                        <n-icon size="20" color="#255359">
-                                            <Add12Regular />
-                                        </n-icon>
-                                    </n-button>
-                                </template>
-                                <span>Add Server</span>
-                            </n-popover>
-                        </template>
-                    </ttl>
-
-                    <div class="w-full h-4 flex-grow overflow-y-auto rounded-md p-2 mt-2">
-                        <ul class="w-full">
-                            <li v-for="s in servers" :key="s.name">
-                                <serverItem :name="s.name" :url="s.url" @changeSelectedSrv="updateOnServer" />
-                                <!--TODO: ADD LISTEN TASK OP-->
-                            </li>
-                        </ul>
-                    </div>
-                </div>
+                <!--Servers-->
+                <ServerField :servers="servers" :on-server-id="onServer" @on-server-change="updateOnServer" />
 
 
                 <div class="row-span-3 bg-white rounded-md flex flex-col">
@@ -68,23 +44,11 @@
                     </div>
                 </div>
 
-                <!-- TABS -->
-                <div class="h-12 rounded-t-md overflow-x-auto bg-white flex items-center pb-3">
-                    <div class="flex justify-start px-1 h-full items-center flex-grow gap-1">
-                        <tabItem name="foob"></tabItem>
-                        <tabItem name="foob"></tabItem>
-                        <tabItem name="foob"></tabItem>
-
-                    </div>
-                </div>
-
-                <!-- MONACO -->
-                <monacoEditor class="bg-white px-1 rounded-b-md mb-1 h-3/5 flex-grow" v-model="editingValue"
-                    :language="language" :hight-change="hightChange" width="100%" height="100%"
-                    @editor-mounted="editorMounted" :read-only="editorRO" />
+                <!--EDITOR-->
+                <EditorField />
 
                 <!-- CONSOLE -->
-                <div class="bg-slate-50 w-full h-1/5 rounded-md flex flex-col">
+                <div class="bg-slate-50 w-full h-2/6 rounded-md flex flex-col">
 
                     <ttl>Console
                         <template #extra>
@@ -121,14 +85,16 @@ import { Add12Regular, Archive48Regular } from '@vicons/fluent'
 import ttl from '../components/HeadTitle.vue'
 import csl from '../components/TheConsole.vue'
 import progItem from '../components/ProgItem.vue'
-import serverItem from '../components/ServerItem.vue'
 import upload from '../components/FileUpload.vue'
 import { Server, } from '../components/serverInfo'
 import { ecliApi } from '@/api'
-import tabItem from '../components/TabItem.vue';
-
+import EditorField from '../components/EditorField.vue';
 import Module from 'wasm-bin/clang';
+import ServerField from '@/components/ServerField.vue';
 
+
+
+// TODO: passthrough server attr to sub sub components
 let servers = reactive([new Server('Local', 'http://127.0.0.1:8527')]);
 
 const initialConsoleValue = ['select a program to view logs'];
@@ -139,20 +105,7 @@ const cleanConsole = async () => {
     consoleCtx.value = initialConsoleValue;
 }
 
-
-let editorRO: Ref<boolean> = ref(false);
-let editingValue = ref(`
-/* hello
-world */`)
-
-let language = ref('c')
-let hightChange = ref<boolean>(false)
-
 let downloadDisabled = ref<boolean>(true)
-
-const editorMounted = (editor: any) => {
-    console.log('editor load complete', editor)
-}
 
 let timer: number;
 
@@ -176,13 +129,11 @@ onMounted(() => {
 
 // handle program
 
-let onServer = ref('');
+let onServer: Ref<number> = ref(0);
 
-
-const updateOnServer = (name: string) => {
-    onServer.value = name;
-    console.log(`Selected Server Updated -> ${onServer.value}`);
-};
+const updateOnServer = (id: number) => {
+    onServer.value = id;
+}
 
 let onLogTask: Ref<number> = ref(0);
 

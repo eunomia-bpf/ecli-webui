@@ -18,5 +18,6 @@ import { X } from '@vicons/tabler'
 
 let props = defineProps<{
     name: string
+    ctx: string
 }>()
 </script>

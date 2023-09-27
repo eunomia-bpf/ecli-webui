@@ -7,6 +7,7 @@ export {}
 
 declare module 'vue' {
   export interface GlobalComponents {
+    EditorField: typeof import('./src/components/EditorField.vue')['default']
     ElUpload: typeof import('element-plus/es')['ElUpload']
     FileUpload: typeof import('./src/components/FileUpload.vue')['default']
     GeneralBtn: typeof import('./src/components/GeneralBtn.vue')['default']
@@ -19,6 +20,7 @@ declare module 'vue' {
     ProgList: typeof import('./src/components/ProgList.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
+    ServerField: typeof import('./src/components/ServerField.vue')['default']
     ServerItem: typeof import('./src/components/ServerItem.vue')['default']
     ServerOp: typeof import('./src/components/ServerOp.vue')['default']
     TabItem: typeof import('./src/components/TabItem.vue')['default']
