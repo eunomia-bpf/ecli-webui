@@ -57,7 +57,7 @@ export default defineConfig({
     rollupOptions: {
       external: [
         /\.mjs$/,
-        'wasm-bin/clang'
+        // 'wasm-bin/clang'
 
       ]
     }
