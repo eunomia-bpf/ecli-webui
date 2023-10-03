@@ -8,7 +8,9 @@
             </n-icon>
         </div>
 
-        {{ props.name }}
+        <div class="w-24 truncate">
+            {{ props.name }}
+        </div>
 
         <div class="flex items-center justify-end w-full h-full pr-1">
             <n-button text @click="deleteTab">
