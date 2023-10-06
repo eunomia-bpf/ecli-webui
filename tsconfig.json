@@ -1,9 +1,16 @@
 {
+  // "include": [
+  //   "wasm-bin/*.d.ts",
+  // ],
   "files": [],
   "types": [
     {
       "name": "types/emscripten",
       "path": "./node_modules/@types/emscripten/index.d.ts"
+    },
+    {
+      "name": "types/clangModule",
+      "path": "./wasm-bin/clang.d.ts"
     },
   ],
   "references": [

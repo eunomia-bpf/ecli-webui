@@ -89,7 +89,8 @@ import { Server, } from '../components/serverInfo'
 import { ecliApi } from '@/api'
 import EditorField from '../components/EditorField.vue';
 import ServerField from '@/components/ServerField.vue';
-import Module from '../../wasm-bin/clang';
+import { _main } from '../../wasm-bin/clang';
+
 
 let servers = reactive([new Server('Local', 'http://127.0.0.1:8527')]);
 
