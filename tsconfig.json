@@ -8,10 +8,10 @@
       "name": "types/emscripten",
       "path": "./node_modules/@types/emscripten/index.d.ts"
     },
-    {
-      "name": "types/clangModule",
-      "path": "./wasm-bin/clang.d.ts"
-    },
+    // {
+    //   "name": "types/clangModule",
+    //   "path": "./wasm-bin/clang.d.ts"
+    // },
   ],
   "references": [
     {
@@ -25,12 +25,21 @@
     }
   ],
   "compilerOptions": {
-    "allowJs": true,
-    "noImplicitAny": false,
+    // "allowJs": true,
+    // "noImplicitAny": false,
     "types": [
       "naive-ui/volar",
       "types/emscripten",
     ],
-    "module": "NodeNext",
+    "module": "esnext",
+    "moduleResolution": "node",
+    "strict": true,
+    "sourceMap": true,
+    "resolveJsonModule": true,
+    "esModuleInterop": true,
+    "lib": [
+      "esnext",
+      "dom"
+    ]
   },
 }
