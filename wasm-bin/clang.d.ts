@@ -6,4 +6,4 @@ declare interface ClangModule extends EmscriptenModule {
     _main(argc: string[], argv: string[]): number;
 }
 
-export default function clang_module(mod?: any): ClangModule;
+export default ClangModule;
