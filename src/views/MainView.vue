@@ -89,11 +89,12 @@ import { Server, } from '../components/serverInfo'
 import { ecliApi } from '@/api'
 import EditorField from '../components/EditorField.vue';
 import ServerField from '@/components/ServerField.vue';
-import clang_module from '../../wasm-bin/clang';
+import init_clang_module from '../../wasm-bin/clang';
 
 onMounted(async () => {
-    let mod = await clang_module();
+    let mod = await init_clang_module();
     // let mod = await create_ffmpeg_module();
+    console.log("clang module loaded");
     // console.log(mod._main(["2"], ["-v"]));
     // console.log(mod._malloc(2));
     // console.log(mod._add(2, 3));
