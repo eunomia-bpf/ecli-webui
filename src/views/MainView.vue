@@ -39,7 +39,7 @@
 
                     <div class="flex justify-end gap-3 h-full w-full px-2 items-center">
                         <btn :disabled="downloadDisabled" class="bg-kamenozoki-300">Download</btn>
-                        <btn :disabled="downloadDisabled" class="bg-kamenozoki-300" @click="startProgram">Run</btn>
+                        <btn :disabled="false" class="bg-kamenozoki-300" @click="startProgram">Run</btn>
                         <btn class="bg-kamenozoki-300">Compile</btn>
                     </div>
                 </div>
@@ -92,9 +92,9 @@ import ServerField from '@/components/ServerField.vue';
 import init_clang_module from '../../wasm-bin/clang';
 
 onMounted(async () => {
-    let mod = await init_clang_module();
+    // let mod = await init_clang_module();
     // let mod = await create_ffmpeg_module();
-    console.log("clang module loaded");
+    // console.log("clang module loaded");
     // console.log(mod._main(["2"], ["-v"]));
     // console.log(mod._malloc(2));
     // console.log(mod._add(2, 3));
@@ -173,11 +173,18 @@ const updateLogCtx = async () => {
         }
     });
 }
-
+import { testWasmProg } from '../b64'
 const startProgram = async () => {
     console.log('starting program');
-    // await ecliApi.startProgram({ server: servers[0].url, program: editingValue.value });
-    // console.log('program started');
+    // test, p_d_b: Vec<u8>
+    // BAD REQ 400 ?
+    await handleStartProg(testWasmProg, "wasm")
+    console.log('program started');
+}
+import { type ProgramType } from '../api-client/api'
+
+const handleStartProg = async (program_data_buf: string, program_type: ProgramType) => {
+    await ecliApi.startTask({ program_data_buf, program_type })
 }
 
 watch(onLogTask, updateLogCtx, { deep: true });
