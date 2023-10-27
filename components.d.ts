@@ -8,7 +8,6 @@ export {}
 declare module 'vue' {
   export interface GlobalComponents {
     EditorField: typeof import('./src/components/EditorField.vue')['default']
-    ElUpload: typeof import('element-plus/es')['ElUpload']
     FileUpload: typeof import('./src/components/FileUpload.vue')['default']
     GeneralBtn: typeof import('./src/components/GeneralBtn.vue')['default']
     HeadTitle: typeof import('./src/components/HeadTitle.vue')['default']
