@@ -1,6 +1,6 @@
 <template>
     <el-upload ref="upload" class="flex justify-start items-center"
-        action="https://run.mocky.io/v3/9d059bf9-4660-45f2-925d-ce80ad6c4d15" :limit="1" :on-exceed="handleExceed"
+        action="https://run.mocky.io/v3/ff4fecce-bac4-4288-90a5-09023b60c090" :limit="5" :on-exceed="handleExceed"
         :auto-upload="false">
         <template #trigger>
             <btn color="#0D5661" text-color="#FFFFFB" class="bg-kamenozoki-300">

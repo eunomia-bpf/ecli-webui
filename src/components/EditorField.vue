@@ -18,7 +18,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, type Ref, computed } from 'vue';
+import { ref, } from 'vue';
 
 const tabs = ref([
     { id: 0, name: 'Tab 1', content: 'Hello, world!' },
