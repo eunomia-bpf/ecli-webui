@@ -44,8 +44,8 @@ State manage: `Pinia`
 
 ## Todo
 
-[ ] Integrate Online Build
+- [ ] Integrate Online Build
 
-[ ] CROS fork of ecli-server
+- [ ] CROS fork of ecli-server
 
-[x] Improve view
+- [x] Improve view
