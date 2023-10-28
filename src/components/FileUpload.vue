@@ -1,9 +1,13 @@
 <template>
-    <input type="file" @change="fileUploaded" />
+    <VueUploadComponent name="Upload file" @change="fileUploaded" drop="true"
+        class="w-1/6 h-5/6 rounded-sm bg-kamenozoki-100 hover:bg-kamenozoki-400">
+        <div class="text-gray-100 py-1 font-medium">Upload</div>
+    </VueUploadComponent>
 </template>
   
 <script setup lang="ts">
 import { type StartTaskRequest } from '../api-client/api';
+import VueUploadComponent from 'vue-upload-component'
 
 let emit = defineEmits<{
     (e: 'update-standby', r: StartTaskRequest): void
