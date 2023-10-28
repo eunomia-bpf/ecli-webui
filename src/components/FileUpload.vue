@@ -1,42 +1,61 @@
 <template>
-    <!-- <el-upload ref="upload" class="flex justify-start items-center"
-        action="https://run.mocky.io/v3/ff4fecce-bac4-4288-90a5-09023b60c090" :limit="5" :on-exceed="handleExceed"
-        :auto-upload="false">
-        <template #trigger>
-            <btn color="#0D5661" text-color="#FFFFFB" class="bg-kamenozoki-300">
-                Select File
-            </btn>
-        </template>
-        <btn color="#0D5661" text-color="#FFFFFB" class="ml-2 bg-kamenozoki-300" @click="submitUpload">
-            upload
-        </btn>
-    </el-upload> -->
-    <input type="file" accept="application/wasm" @change="fileUploaded" />
-    <btn color="#961b3c" text-color="#FFFFFB" class="ml-2 bg-mandy-600" @click="clearFiles">
-        Clean
-    </btn>
+    <input type="file" @change="fileUploaded" />
 </template>
   
 <script setup lang="ts">
-import btn from './GeneralBtn.vue'
+import { type StartTaskRequest } from '../api-client/api';
 
-const clearFiles = () => {
+let emit = defineEmits<{
+    (e: 'update-standby', r: StartTaskRequest): void
+    (e: 'add-to-tab', name: string, ctx: string): void
+}>()
 
+const buf2base64 = (u8aBuf: Uint8Array) => {
+    return btoa(
+        u8aBuf.reduce((data, byte) => data + String.fromCharCode(byte), '')
+    );
 }
-import { ecliApi } from '@/api'
-
+const isTxtSrc = (t: string) => {
+    let srcFileTypes = ["text/x-c++src", "text/x-csrc", "text/x-chdr"];
+    return srcFileTypes.includes(t)
+}
 const fileUploaded = async (e: any) => {
     let files = e.target.files || e.dataTransfer!.files;
 
-    let reader = new FileReader();
-    reader.readAsDataURL(files[0]);
+    // recogniz file type
     let buf = await files[0].arrayBuffer();
-    let encoded = btoa(
-        new Uint8Array(buf)
-            .reduce((data, byte) => data + String.fromCharCode(byte), '')
-    );
-    console.log(encoded);
-    await ecliApi.startTask({ program_data_buf: encoded, program_type: "wasm" })
+    let u8aBuf = new Uint8Array(buf);
+    let trunedFileHead = [...u8aBuf].slice(0, 4);
+
+    if (trunedFileHead.map(x => x.toString(16).padStart(2, '0'))
+        .join('') == "0061736d") { // wasm bin sig
+        console.log("uploaded wasm binary, commit into standby slot");
+
+        let encoded = buf2base64(u8aBuf);
+        emit('update-standby', { program_data_buf: encoded, program_type: "wasm" });
+
+    } else if (files[0].type == "application/json") {
+        // json
+
+        emit('update-standby', {
+            program_data_buf: buf2base64(u8aBuf),
+            program_type: "json"
+        });
+
+    } else if (files[0] == "application/x-tar") {
+        // tar
+
+        emit('update-standby', {
+            program_data_buf: buf2base64(u8aBuf),
+            program_type: "tar"
+        });
+    } else if (isTxtSrc(files[0].type)) {
+        // source file, send to editor
+        console.log(`adding ${files[0].name}`);
+        emit('add-to-tab', files[0].name, files[0].text())
+    } else {
+        console.log("unresolve file type");
+    }
 }
 
 </script>

@@ -35,17 +35,19 @@
 
                 <div class="flex justify-start gap-3 h-10 items-center">
 
-                    <upload />
+                    <upload @update-standby="updateStandbyBinary" @add-to-tab="addToTab" />
 
                     <div class="flex justify-end gap-3 h-full w-full px-2 items-center">
                         <btn :disabled="downloadDisabled" class="bg-kamenozoki-300">Download</btn>
-                        <btn :disabled="false" class="bg-kamenozoki-300" @click="startProgram">Run</btn>
+                        <btn :disabled="standbyBinary.program_data_buf == ''" class="bg-kamenozoki-300"
+                            @click="startProgram">Run
+                        </btn>
                         <btn class="bg-kamenozoki-300">Compile</btn>
                     </div>
                 </div>
 
                 <!--EDITOR-->
-                <EditorField />
+                <EditorField :tabs="tabs" />
 
                 <!-- CONSOLE -->
                 <div class="bg-slate-50 w-full h-2/6 rounded-md flex flex-col">
@@ -89,7 +91,6 @@ import { Server, } from '../components/serverInfo'
 import { ecliApi } from '@/api'
 import EditorField from '../components/EditorField.vue';
 import ServerField from '@/components/ServerField.vue';
-import init_clang_module from '../../wasm-bin/clang';
 
 onMounted(async () => {
     // let mod = await init_clang_module();
@@ -102,6 +103,23 @@ onMounted(async () => {
 
 
 let servers = reactive([new Server('Local', 'http://127.0.0.1:8527')]);
+
+import { type StartTaskRequest } from '../api-client/api';
+
+let standbyBinary: Ref<StartTaskRequest> = ref({ program_data_buf: '', program_type: "wasm" });
+
+let tabs: Ref<Map<string, string>> = ref(new Map());
+
+const updateStandbyBinary = (r: StartTaskRequest) => {
+    standbyBinary.value = r;
+    console.log("standby binary ready");
+}
+
+const addToTab = async (n: string, c: string) => { // ?
+    console.log(`name: ${n}\nctx: ${c}`)
+    tabs.value.set(n, (await c));
+    console.log(`sent ${n} into editor`);
+}
 
 provide('servers', servers);
 
@@ -155,10 +173,7 @@ const updateLogCtx = async () => {
         if (t.id === onLogTask.value) {
             console.log(`Updating Log Context for ${t.name}`);
             ecliApi.getTaskLogByID({ id: t.id }).then((log) => {
-                // log.data[0] : {
-                //     cursor: number;
-                //     log: { log: string, timestamp: num, log_type: string }
-                // }
+
 
                 let logCtx = log.data.map((l) => {
                     let logCtx = l.log;
@@ -173,19 +188,13 @@ const updateLogCtx = async () => {
         }
     });
 }
-import { testWasmProg } from '../b64'
 const startProgram = async () => {
     console.log('starting program');
-    // test, p_d_b: Vec<u8>
-    // BAD REQ 400 ?
-    await handleStartProg(testWasmProg, "wasm")
+    await ecliApi.startTask(standbyBinary.value);
     console.log('program started');
 }
-import { type ProgramType } from '../api-client/api'
 
-const handleStartProg = async (program_data_buf: string, program_type: ProgramType) => {
-    await ecliApi.startTask({ program_data_buf, program_type })
-}
+
 
 watch(onLogTask, updateLogCtx, { deep: true });
 
