@@ -30,3 +30,5 @@ coverage
 /emception
 
 /src/api-client
+/wasm-bin/clang.wasm
+/wasm-bin/llvm-box.wasm

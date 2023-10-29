@@ -1,44 +1,65 @@
 <template>
-    <el-upload ref="upload" class="flex justify-start items-center"
-        action="https://run.mocky.io/v3/9d059bf9-4660-45f2-925d-ce80ad6c4d15" :limit="1" :on-exceed="handleExceed"
-        :auto-upload="false">
-        <template #trigger>
-            <btn color="#0D5661" text-color="#FFFFFB" class="bg-kamenozoki-300">
-                Select File
-            </btn>
-        </template>
-        <btn color="#0D5661" text-color="#FFFFFB" class="ml-2 bg-kamenozoki-300" @click="submitUpload">
-            upload
-        </btn>
-    </el-upload>
-    <btn color="#961b3c" text-color="#FFFFFB" class="ml-2 bg-mandy-600" @click="clearFiles">
-        Clean
-    </btn>
+    <VueUploadComponent name="Upload file" @change="fileUploaded" drop="true"
+        class="w-1/6 h-5/6 rounded-sm bg-kamenozoki-100 hover:bg-kamenozoki-400">
+        <div class="text-gray-100 py-1 font-medium">Upload</div>
+    </VueUploadComponent>
 </template>
   
 <script setup lang="ts">
-import { ref } from 'vue'
-import { genFileId } from 'element-plus'
-import type { UploadInstance, UploadProps, UploadRawFile } from 'element-plus'
-import btn from './GeneralBtn.vue'
+import { type StartTaskRequest } from '../api-client/api';
+import VueUploadComponent from 'vue-upload-component'
 
+let emit = defineEmits<{
+    (e: 'update-standby', r: StartTaskRequest): void
+    (e: 'add-to-tab', name: string, ctx: string): void
+}>()
 
-
-const upload = ref<UploadInstance>()
-
-const handleExceed: UploadProps['onExceed'] = (files) => {
-    upload.value!.clearFiles()
-    const file = files[0] as UploadRawFile
-    file.uid = genFileId()
-    upload.value!.handleStart(file)
+const buf2base64 = (u8aBuf: Uint8Array) => {
+    return btoa(
+        u8aBuf.reduce((data, byte) => data + String.fromCharCode(byte), '')
+    );
 }
-
-const submitUpload = () => {
-    upload.value!.submit()
+const isTxtSrc = (t: string) => {
+    let srcFileTypes = ["text/x-c++src", "text/x-csrc", "text/x-chdr"];
+    return srcFileTypes.includes(t)
 }
+const fileUploaded = async (e: any) => {
+    let files = e.target.files || e.dataTransfer!.files;
 
-const clearFiles = () => {
-    upload.value!.clearFiles()
+    // recogniz file type
+    let buf = await files[0].arrayBuffer();
+    let u8aBuf = new Uint8Array(buf);
+    let trunedFileHead = [...u8aBuf].slice(0, 4);
+
+    if (trunedFileHead.map(x => x.toString(16).padStart(2, '0'))
+        .join('') == "0061736d") { // wasm bin sig
+        console.log("uploaded wasm binary, commit into standby slot");
+
+        let encoded = buf2base64(u8aBuf);
+        emit('update-standby', { program_data_buf: encoded, program_type: "wasm" });
+
+    } else if (files[0].type == "application/json") {
+        // json
+
+        emit('update-standby', {
+            program_data_buf: buf2base64(u8aBuf),
+            program_type: "json"
+        });
+
+    } else if (files[0] == "application/x-tar") {
+        // tar
+
+        emit('update-standby', {
+            program_data_buf: buf2base64(u8aBuf),
+            program_type: "tar"
+        });
+    } else if (isTxtSrc(files[0].type)) {
+        // source file, send to editor
+        console.log(`adding ${files[0].name}`);
+        emit('add-to-tab', files[0].name, files[0].text())
+    } else {
+        console.log("unresolve file type");
+    }
 }
 
 </script>

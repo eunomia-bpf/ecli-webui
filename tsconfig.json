@@ -1,5 +1,18 @@
 {
+  // "include": [
+  //   "wasm-bin/*.d.ts",
+  // ],
   "files": [],
+  "types": [
+    {
+      "name": "types/emscripten",
+      "path": "./node_modules/@types/emscripten/index.d.ts"
+    },
+    // {
+    //   "name": "types/clangModule",
+    //   "path": "./wasm-bin/clang.d.ts"
+    // },
+  ],
   "references": [
     {
       "path": "./tsconfig.node.json"
@@ -12,10 +25,21 @@
     }
   ],
   "compilerOptions": {
-    "allowJs": true,
+    // "allowJs": true,
+    // "noImplicitAny": false,
     "types": [
       "naive-ui/volar",
+      "types/emscripten",
     ],
-    "module": "NodeNext",
+    "module": "esnext",
+    "moduleResolution": "node",
+    "strict": true,
+    "sourceMap": true,
+    "resolveJsonModule": true,
+    "esModuleInterop": true,
+    "lib": [
+      "esnext",
+      "dom"
+    ]
   },
 }

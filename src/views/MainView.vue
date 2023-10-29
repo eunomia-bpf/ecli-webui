@@ -10,33 +10,9 @@
 
             <!-- LEFT SIDE -->
             <div class="col-span-2 grid grid-rows-4 w-full h-full gap-2">
-                <div class="row-span-1 bg-white flex flex-col rounded-md">
-                    <ttl>
-                        Server
 
-                        <template #extra>
-                            <n-popover trigger="hover">
-                                <template #trigger>
-                                    <n-button text>
-                                        <n-icon size="20" color="#255359">
-                                            <Add12Regular />
-                                        </n-icon>
-                                    </n-button>
-                                </template>
-                                <span>Add Server</span>
-                            </n-popover>
-                        </template>
-                    </ttl>
-
-                    <div class="w-full h-4 flex-grow overflow-y-auto rounded-md p-2 mt-2">
-                        <ul class="w-full">
-                            <li v-for="s in servers" :key="s.name">
-                                <serverItem :name="s.name" :url="s.url" @changeSelectedSrv="updateOnServer" />
-                                <!--TODO: ADD LISTEN TASK OP-->
-                            </li>
-                        </ul>
-                    </div>
-                </div>
+                <!--Servers-->
+                <ServerField :servers="servers" :on-server-id="onServer" @on-server-change="updateOnServer" />
 
 
                 <div class="row-span-3 bg-white rounded-md flex flex-col">
@@ -59,32 +35,22 @@
 
                 <div class="flex justify-start gap-3 h-10 items-center">
 
-                    <upload />
+                    <upload @update-standby="updateStandbyBinary" @add-to-tab="addToTab" />
 
                     <div class="flex justify-end gap-3 h-full w-full px-2 items-center">
                         <btn :disabled="downloadDisabled" class="bg-kamenozoki-300">Download</btn>
-                        <btn :disabled="downloadDisabled" class="bg-kamenozoki-300" @click="startProgram">Run</btn>
+                        <btn :disabled="standbyBinary.program_data_buf == ''" class="bg-kamenozoki-300"
+                            @click="startProgram">Run
+                        </btn>
                         <btn class="bg-kamenozoki-300">Compile</btn>
                     </div>
                 </div>
 
-                <!-- TABS -->
-                <div class="h-12 rounded-t-md overflow-x-auto bg-white flex items-center pb-3">
-                    <div class="flex justify-start px-1 h-full items-center flex-grow gap-1">
-                        <tabItem name="foob"></tabItem>
-                        <tabItem name="foob"></tabItem>
-                        <tabItem name="foob"></tabItem>
-
-                    </div>
-                </div>
-
-                <!-- MONACO -->
-                <monacoEditor class="bg-white px-1 rounded-b-md mb-1 h-3/5 flex-grow" v-model="editingValue"
-                    :language="language" :hight-change="hightChange" width="100%" height="100%"
-                    @editor-mounted="editorMounted" :read-only="editorRO" />
+                <!--EDITOR-->
+                <EditorField :tabs="tabs" />
 
                 <!-- CONSOLE -->
-                <div class="bg-slate-50 w-full h-1/5 rounded-md flex flex-col">
+                <div class="bg-slate-50 w-full h-2/6 rounded-md flex flex-col">
 
                     <ttl>Console
                         <template #extra>
@@ -114,28 +80,48 @@
 
 
 <script setup lang="ts">
-import { reactive, ref, type Ref, watch, onBeforeUnmount, onMounted } from 'vue';
-import monacoEditor from '../components/MonacoEditor.vue'
+import { reactive, provide, ref, type Ref, watch, onBeforeUnmount, onMounted } from 'vue';
 import btn from '../components/GeneralBtn.vue'
-import { Add12Regular, Archive48Regular } from '@vicons/fluent'
+import { Archive48Regular } from '@vicons/fluent'
 import ttl from '../components/HeadTitle.vue'
 import csl from '../components/TheConsole.vue'
 import progItem from '../components/ProgItem.vue'
-import serverItem from '../components/ServerItem.vue'
 import upload from '../components/FileUpload.vue'
 import { Server, } from '../components/serverInfo'
 import { ecliApi } from '@/api'
-import tabItem from '../components/TabItem.vue';
+import EditorField from '../components/EditorField.vue';
+import ServerField from '@/components/ServerField.vue';
 
-// import * as Comlink from "comlink";
-
-// import EmceptionWorker from "../components/clang/emception.worker.js";
-
-// const emception = Comlink.wrap(new EmceptionWorker());
-
+onMounted(async () => {
+    // let mod = await init_clang_module();
+    // let mod = await create_ffmpeg_module();
+    // console.log("clang module loaded");
+    // console.log(mod._main(["2"], ["-v"]));
+    // console.log(mod._malloc(2));
+    // console.log(mod._add(2, 3));
+});
 
 
 let servers = reactive([new Server('Local', 'http://127.0.0.1:8527')]);
+
+import { type StartTaskRequest } from '../api-client/api';
+
+let standbyBinary: Ref<StartTaskRequest> = ref({ program_data_buf: '', program_type: "wasm" });
+
+let tabs: Ref<Map<string, string>> = ref(new Map());
+
+const updateStandbyBinary = (r: StartTaskRequest) => {
+    standbyBinary.value = r;
+    console.log("standby binary ready");
+}
+
+const addToTab = async (n: string, c: string) => { // ?
+    console.log(`name: ${n}\nctx: ${c}`)
+    tabs.value.set(n, (await c));
+    console.log(`sent ${n} into editor`);
+}
+
+provide('servers', servers);
 
 const initialConsoleValue = ['select a program to view logs'];
 
@@ -145,20 +131,7 @@ const cleanConsole = async () => {
     consoleCtx.value = initialConsoleValue;
 }
 
-
-let editorRO: Ref<boolean> = ref(false);
-let editingValue = ref(`
-/* hello
-world */`)
-
-let language = ref('c')
-let hightChange = ref<boolean>(false)
-
 let downloadDisabled = ref<boolean>(true)
-
-const editorMounted = (editor: any) => {
-    console.log('editor load complete', editor)
-}
 
 let timer: number;
 
@@ -182,13 +155,11 @@ onMounted(() => {
 
 // handle program
 
-let onServer = ref('');
+let onServer: Ref<number> = ref(0);
 
-
-const updateOnServer = (name: string) => {
-    onServer.value = name;
-    console.log(`Selected Server Updated -> ${onServer.value}`);
-};
+const updateOnServer = (id: number) => {
+    onServer.value = id;
+}
 
 let onLogTask: Ref<number> = ref(0);
 
@@ -202,10 +173,7 @@ const updateLogCtx = async () => {
         if (t.id === onLogTask.value) {
             console.log(`Updating Log Context for ${t.name}`);
             ecliApi.getTaskLogByID({ id: t.id }).then((log) => {
-                // log.data[0] : {
-                //     cursor: number;
-                //     log: { log: string, timestamp: num, log_type: string }
-                // }
+
 
                 let logCtx = log.data.map((l) => {
                     let logCtx = l.log;
@@ -220,12 +188,13 @@ const updateLogCtx = async () => {
         }
     });
 }
-
 const startProgram = async () => {
     console.log('starting program');
-    // await ecliApi.startProgram({ server: servers[0].url, program: editingValue.value });
-    // console.log('program started');
+    await ecliApi.startTask(standbyBinary.value);
+    console.log('program started');
 }
+
+
 
 watch(onLogTask, updateLogCtx, { deep: true });
 

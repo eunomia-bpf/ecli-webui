@@ -57,12 +57,13 @@ import { onMounted, computed, ref, watch, onBeforeUnmount } from 'vue'
 let timer: number;
 
 let props = defineProps<{
+    id: number,
     name: string,
     url: string,
 }>();
 
 const emit = defineEmits<{
-    (e: 'changeSelectedSrv', name: string): void
+    (e: 'changeSelectedSrv', id: number): void
     (e: 'updateSelectedSrv', url: string): void
 }>()
 
@@ -70,7 +71,7 @@ let isConnected = ref(false);
 
 onMounted(() => {
     checkConnection();
-    emit('changeSelectedSrv', props.name);
+    emit('changeSelectedSrv', props.id);
     timer = setInterval(checkConnection, 5000);
 });
 

@@ -4,6 +4,7 @@ Front-end for ecli.
 
 Current Avaliable feature:
 + Control ecli-server running on local by dev proxy
++ Upload and online editing
 
 ## Project Setup
 
@@ -43,6 +44,8 @@ State manage: `Pinia`
 
 ## Todo
 
-[ ] Integrate Online Build
-[ ] CROS fork of ecli-server
-[ ] Improve view
+- [ ] Integrate Online Build
+
+- [ ] CROS fork of ecli-server
+
+- [x] Improve view

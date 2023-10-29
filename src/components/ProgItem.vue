@@ -70,7 +70,7 @@
 <script setup lang="ts">
 import { Open16Regular, Pause16Regular, Play16Regular } from '@vicons/fluent'
 import { X } from '@vicons/tabler'
-import { computed, onMounted, ref, type Ref } from 'vue'
+import { computed, onMounted, ref, } from 'vue'
 import btn from './GeneralBtn.vue'
 import { ecliApi } from '@/api'
 import { TaskStatus } from '@/api-client'
@@ -101,7 +101,7 @@ let pausedStatus = computed({
 
 
 onMounted(() => {
-    console.log(props.id + "now " + pausedStatus.value);
+    console.log(props.id + " now " + pausedStatus.value);
 });
 
 const pauseOrResumeTask = async () => {

@@ -13,7 +13,9 @@ export class Tasks implements TaskListResponseTasksInner {
     }
 }
 
+let serverIdCounter = 0;
 export class Server {
+    id: number;
     name: string;
     url: string;
     tasks: Array<Tasks> = [];
@@ -24,6 +26,7 @@ export class Server {
     ) {
         this.name = name;
         this.url = url;
+        this.id = ++serverIdCounter;
     };
 
     private async getTasks(): Promise<Array<Tasks>> {
