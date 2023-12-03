@@ -5,7 +5,6 @@ import vue from '@vitejs/plugin-vue'
 import vueJsx from '@vitejs/plugin-vue-jsx'
 import Components from 'unplugin-vue-components/vite'
 import AutoImport from 'unplugin-auto-import/vite'
-import { NaiveUiResolver } from 'unplugin-vue-components/resolvers'
 import { ElementPlusResolver } from 'unplugin-vue-components/resolvers'
 import { comlink } from 'vite-plugin-comlink'
 
@@ -20,20 +19,12 @@ export default defineConfig({
       resolvers: [ElementPlusResolver()],
       imports: [
         'vue',
-        {
-          'naive-ui': [
-            'useDialog',
-            'useMessage',
-            'useNotification',
-            'useLoadingBar'
-          ]
-        }
       ]
     }),
     vueJsx(),
     Components({
       dts: true,
-      resolvers: [NaiveUiResolver(), ElementPlusResolver()]
+      resolvers: [ElementPlusResolver()]
     })
   ],
   optimizeDeps: {

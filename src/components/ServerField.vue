@@ -3,16 +3,13 @@
         <ttl>
             Server
             <template #extra>
-                <n-popover trigger="hover">
-                    <template #trigger>
-                        <n-button text>
-                            <n-icon size="20" color="#255359">
-                                <Add12Regular />
-                            </n-icon>
-                        </n-button>
-                    </template>
-                    <span>Add Server</span>
-                </n-popover>
+                <el-popover trigger="hover" content="this is content, this is content, this is content">
+                    <el-button text>
+                        <n-icon size="20" color="#255359">
+                            <Add12Regular />
+                        </n-icon>
+                    </el-button>
+                </el-popover>
             </template>
         </ttl>
 

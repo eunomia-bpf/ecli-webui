@@ -28,7 +28,6 @@
     // "allowJs": true,
     // "noImplicitAny": false,
     "types": [
-      "naive-ui/volar",
       "types/emscripten",
     ],
     "module": "esnext",
