@@ -3,9 +3,9 @@
         class="flex items-center h-7 bg-customBg-100 rounded-sm hover:bg-moss-50 w-24 px-1 whitespace-nowrap">
 
         <div v-if="name == activeTab">
-            <n-icon size="10" color="#255359" class="mr-1">
+            <el-icon size="10" color="#255359" class="mr-1">
                 <CircleDot />
-            </n-icon>
+            </el-icon>
         </div>
 
         <div class="w-24 truncate">
@@ -13,11 +13,11 @@
         </div>
 
         <div class="flex items-center justify-end w-full h-full pr-1">
-            <n-button text @click="deleteTab">
-                <n-icon>
+            <button text @click="deleteTab" class="flex items-center">
+                <el-icon>
                     <X />
-                </n-icon>
-            </n-button>
+                </el-icon>
+            </button>
         </div>
     </button>
 </template>

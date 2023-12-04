@@ -54,16 +54,16 @@
 
                     <ttl>Console
                         <template #extra>
-                            <n-popover trigger="hover">
-                                <template #trigger>
-                                    <n-button text @click="cleanConsole">
-                                        <n-icon size="20" color="#255359">
+                            <el-popover trigger="hover">
+                                <template #reference>
+                                    <button text @click="cleanConsole">
+                                        <el-icon size="20" color="#255359">
                                             <Archive48Regular />
-                                        </n-icon>
-                                    </n-button>
+                                        </el-icon>
+                                    </button>
                                 </template>
-                                <span>Clean</span>
-                            </n-popover>
+                                <div class="text-center">Clean Console</div>
+                            </el-popover>
                         </template>
                     </ttl>
 

@@ -27,40 +27,40 @@
                 </div>
 
 
-                <n-popover trigger="hover">
-                    <template #trigger>
+                <el-popover trigger="hover">
+                    <template #reference>
                         <btn @click="pauseOrResumeTask" text>
-                            <n-icon size="20" color="#255359">
+                            <el-icon size="20" color="#255359">
                                 <Pause16Regular v-if="!pausedStatus" />
                                 <Play16Regular v-if="pausedStatus" />
-                            </n-icon>
+                            </el-icon>
                         </btn>
                     </template>
-                    <span>Pause / Resume</span>
-                </n-popover>
+                    <div class="text-center">Pause / Resume</div>
+                </el-popover>
 
-                <n-popover trigger="hover">
-                    <template #trigger>
+                <el-popover trigger="hover">
+                    <template #reference>
                         <btn @click="emits('changeLogTask', props.id)" text>
-                            <n-icon size="20" color="#255359">
+                            <el-icon size="20" color="#255359">
                                 <Open16Regular />
-                            </n-icon>
+                            </el-icon>
                         </btn>
                     </template>
-                    <span>Log</span>
-                </n-popover>
+                    <div class="text-center">Log</div>
+                </el-popover>
 
 
-                <n-popover trigger="hover">
+                <el-popover trigger="hover">
                     <template #trigger>
                         <btn text @click="stopTask">
-                            <n-icon size="20" color="#255359">
+                            <el-icon size="20" color="#255359">
                                 <X />
-                            </n-icon>
+                            </el-icon>
                         </btn>
                     </template>
                     <span>Stop</span>
-                </n-popover>
+                </el-popover>
 
             </div>
         </div>

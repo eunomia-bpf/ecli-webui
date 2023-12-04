@@ -8,7 +8,7 @@ import AutoImport from 'unplugin-auto-import/vite'
 import { ElementPlusResolver } from 'unplugin-vue-components/resolvers'
 import { comlink } from 'vite-plugin-comlink'
 
-const proxyAddr: string = 'http://127.0.0.1:8527'
+const proxyAddr: string = 'http://10.0.0.15:8527'
 
 // https://vitejs.dev/config/
 export default defineConfig({
