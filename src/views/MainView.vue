@@ -54,16 +54,16 @@
 
                     <ttl>Console
                         <template #extra>
-                            <n-popover trigger="hover">
-                                <template #trigger>
-                                    <n-button text @click="cleanConsole">
-                                        <n-icon size="20" color="#255359">
+                            <el-popover trigger="hover">
+                                <template #reference>
+                                    <button text @click="cleanConsole">
+                                        <el-icon size="20" color="#255359">
                                             <Archive48Regular />
-                                        </n-icon>
-                                    </n-button>
+                                        </el-icon>
+                                    </button>
                                 </template>
-                                <span>Clean</span>
-                            </n-popover>
+                                <div class="text-center">Clean Console</div>
+                            </el-popover>
                         </template>
                     </ttl>
 
@@ -93,6 +93,8 @@ import EditorField from '../components/EditorField.vue';
 import ServerField from '@/components/ServerField.vue';
 
 onMounted(async () => {
+    // TODO: integrate clang wasm module!
+
     // let mod = await init_clang_module();
     // let mod = await create_ffmpeg_module();
     // console.log("clang module loaded");
@@ -117,7 +119,7 @@ const updateStandbyBinary = (r: StartTaskRequest) => {
 
 const addToTab = async (n: string, c: string) => { // ?
     console.log(`name: ${n}\nctx: ${c}`)
-    tabs.value.set(n, (await c));
+    tabs.value.set(n, c);
     console.log(`sent ${n} into editor`);
 }
 

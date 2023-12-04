@@ -6,39 +6,40 @@
             </div>
             <div class="flex items-center w-full justify-end mr-2 gap-3">
 
-
-                <n-popover trigger="hover" v-if="!isConnected">
-                    <template #trigger>
+                <el-popover trigger="hover" v-if="!isConnected">
+                    <template #reference>
                         <div :class="stateClass">
-                            <n-icon>
+                            <el-icon>
                                 <PlugDisconnected20Regular />
-                            </n-icon>
+                            </el-icon>
                         </div>
                     </template>
-                    <span>Connection Lost</span>
-                </n-popover>
+                    <div class="text-center">Connection Lost</div>
+                </el-popover>
 
-                <n-popover trigger="hover">
-                    <template #trigger>
-                        <n-button text>
-                            <n-icon size="20" color="#255359">
+                <el-popover trigger="hover">
+                    <template #reference>
+                        <button class="flex items-center">
+                            <el-icon size="20" color="#255359">
                                 <Edit16Regular />
-                            </n-icon>
-                        </n-button>
+                            </el-icon>
+                        </button>
                     </template>
-                    <span>Edit</span>
-                </n-popover>
 
-                <n-popover trigger="hover">
-                    <template #trigger>
-                        <n-button text>
-                            <n-icon size="20" color="#255359">
+                    <div class="text-center">Edit Server</div>
+
+                </el-popover>
+
+                <el-popover trigger="hover">
+                    <template #reference>
+                        <button class="flex items-center">
+                            <el-icon size="20" color="#255359">
                                 <X />
-                            </n-icon>
-                        </n-button>
+                            </el-icon>
+                        </button>
                     </template>
-                    <span>Delete</span>
-                </n-popover>
+                    <div class="text-center">Delete Server</div>
+                </el-popover>
 
             </div>
         </button>

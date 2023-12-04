@@ -5,11 +5,10 @@ import vue from '@vitejs/plugin-vue'
 import vueJsx from '@vitejs/plugin-vue-jsx'
 import Components from 'unplugin-vue-components/vite'
 import AutoImport from 'unplugin-auto-import/vite'
-import { NaiveUiResolver } from 'unplugin-vue-components/resolvers'
 import { ElementPlusResolver } from 'unplugin-vue-components/resolvers'
 import { comlink } from 'vite-plugin-comlink'
 
-const proxyAddr: string = 'http://127.0.0.1:8527'
+const proxyAddr: string = 'http://10.0.0.15:8527'
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -20,20 +19,12 @@ export default defineConfig({
       resolvers: [ElementPlusResolver()],
       imports: [
         'vue',
-        {
-          'naive-ui': [
-            'useDialog',
-            'useMessage',
-            'useNotification',
-            'useLoadingBar'
-          ]
-        }
       ]
     }),
     vueJsx(),
     Components({
       dts: true,
-      resolvers: [NaiveUiResolver(), ElementPlusResolver()]
+      resolvers: [ElementPlusResolver()]
     })
   ],
   optimizeDeps: {

@@ -4,7 +4,8 @@
 </script>
 
 <template>
-    <n-button color="#0D5661" text-color="#FFFFFB">
+    <!-- TODO: to be interactive -->
+    <button class="btn btn-sm glass mb-3 mt-2">
         <slot></slot>
-    </n-button>
+    </button>
 </template>

@@ -1,8 +1,8 @@
 <template>
     <div class="flex items-center ml-1 mt-1">
-        <n-icon size="27" color="#A8D8B9">
+        <el-icon size="27" color="#A8D8B9">
             <Square12Regular />
-        </n-icon>
+        </el-icon>
         <div class="flex items-center flex-col h-full">
             <div class="font-sans items-center pt-px font-normal whitespace-nowrap text-xl">
                 <p class="text-empress-900">
