@@ -1,4 +1,5 @@
 <template>
+    <!-- TODO: refactor ( a more simple way? -->
     <VueUploadComponent name="Upload file" @change="fileUploaded" drop="true"
         class="w-1/6 h-5/6 rounded-md bg-kamenozoki-100 hover:bg-kamenozoki-400">
         <div class="text-gray-100 py-1 font-medium">Upload</div>
