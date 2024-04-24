@@ -68,59 +68,54 @@
 </template>
 
 <script setup lang="ts">
-import { Open16Regular, Pause16Regular, Play16Regular } from '@vicons/fluent'
-import { X } from '@vicons/tabler'
-import { computed, onMounted, ref, } from 'vue'
-import btn from './GeneralBtn.vue'
-import { ecliApi } from '@/api'
-import { TaskStatus } from '@/api-client'
+import { ecliApi } from "@/api";
+import { TaskStatus } from "@/api-client";
+import { Open16Regular, Pause16Regular, Play16Regular } from "@vicons/fluent";
+import { X } from "@vicons/tabler";
+import { computed, onMounted, ref } from "vue";
+import btn from "./GeneralBtn.vue";
 
 // {"tasks":[{"status":"running","id":1,"name":"bpf-program-1693148745"}]}
 
+const props = defineProps<{
+	name: string;
+	id: number;
+	status: TaskStatus;
+}>();
 
-let props = defineProps<{
-    name: string,
-    id: number,
-    status: TaskStatus,
-}>()
+const emits = defineEmits<(e: "changeLogTask", id: number) => void>();
 
-let emits = defineEmits<{
-    (e: 'changeLogTask', id: number): void
-}>()
+const rawPausedStatus = ref(props.status === TaskStatus.Paused);
 
-let rawPausedStatus = ref(props.status === TaskStatus.Paused);
-
-let pausedStatus = computed({
-    get() {
-        return rawPausedStatus.value;
-    },
-    set(n) {
-        rawPausedStatus.value = n;
-    }
-})
-
+const pausedStatus = computed({
+	get() {
+		return rawPausedStatus.value;
+	},
+	set(n) {
+		rawPausedStatus.value = n;
+	},
+});
 
 onMounted(() => {
-    console.log(props.id + " now " + pausedStatus.value);
+	console.log(props.id + " now " + pausedStatus.value);
 });
 
 const pauseOrResumeTask = async () => {
-
-    console.log("task with id: " + props.id + " is paused: " + pausedStatus.value);
-    if (pausedStatus.value) {
-        await ecliApi.resumeTaskByID({ id: props.id });
-        console.log('resuming task ' + props.id);
-    } else {
-        await ecliApi.pauseTaskByID({ id: props.id });
-        console.log('pausing task ' + props.id);
-    }
-    pausedStatus.value = !pausedStatus.value;
+	console.log(
+		"task with id: " + props.id + " is paused: " + pausedStatus.value,
+	);
+	if (pausedStatus.value) {
+		await ecliApi.resumeTaskByID({ id: props.id });
+		console.log("resuming task " + props.id);
+	} else {
+		await ecliApi.pauseTaskByID({ id: props.id });
+		console.log("pausing task " + props.id);
+	}
+	pausedStatus.value = !pausedStatus.value;
 };
 
-
 const stopTask = async () => {
-    console.log('try stopping task ' + props.id);
-    await ecliApi.stopTaskByID({ id: props.id });
-}
-
+	console.log("try stopping task " + props.id);
+	await ecliApi.stopTaskByID({ id: props.id });
+};
 </script>

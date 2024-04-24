@@ -48,62 +48,63 @@
 </template>
 
 <script setup lang="ts">
-import {
-    Edit16Regular,
-    PlugDisconnected20Regular,
-} from '@vicons/fluent'
-import { X } from '@vicons/tabler'
-import { onMounted, computed, ref, watch, onBeforeUnmount } from 'vue'
+import { Edit16Regular, PlugDisconnected20Regular } from "@vicons/fluent";
+import { X } from "@vicons/tabler";
+import { computed, onBeforeUnmount, onMounted, ref, watch } from "vue";
 
 let timer: number;
 
-let props = defineProps<{
-    id: number,
-    name: string,
-    url: string,
+const props = defineProps<{
+	id: number;
+	name: string;
+	url: string;
 }>();
 
 const emit = defineEmits<{
-    (e: 'changeSelectedSrv', id: number): void
-    (e: 'updateSelectedSrv', url: string): void
-}>()
+	(e: "changeSelectedSrv", id: number): void;
+	(e: "updateSelectedSrv", url: string): void;
+}>();
 
-let isConnected = ref(false);
+const isConnected = ref(false);
 
 onMounted(() => {
-    checkConnection();
-    emit('changeSelectedSrv', props.id);
-    timer = setInterval(checkConnection, 5000);
+	checkConnection();
+	emit("changeSelectedSrv", props.id);
+	timer = setInterval(checkConnection, 5000);
 });
 
-import { ecliApi } from '@/api'
+import { ecliApi } from "@/api";
 
 const checkConnection = async () => {
-    try {
-        const resp = await ecliApi.getTaskList();
-        const data = resp.data;
-        isConnected.value = "tasks" in data;
-        console.log(data)
-    } catch (error) {
-        isConnected.value = false;
-    }
+	try {
+		const resp = await ecliApi.getTaskList();
+		const data = resp.data;
+		isConnected.value = "tasks" in data;
+		console.log(data);
+	} catch (error) {
+		isConnected.value = false;
+	}
 };
 // ?url=${encodeURIComponent(props.url)}
-watch(() => props.url, () => {
-    clearInterval(timer);
-    checkConnection();
-    timer = setInterval(checkConnection, 2000);
-});
+watch(
+	() => props.url,
+	() => {
+		clearInterval(timer);
+		checkConnection();
+		timer = setInterval(checkConnection, 2000);
+	},
+);
 
 onBeforeUnmount(() => {
-    clearInterval(timer);
+	clearInterval(timer);
 });
 
-let baseStateClass = "px-3 text-xl rounded-xl py-2 items-center flex justify-center";
+const baseStateClass =
+	"px-3 text-xl rounded-xl py-2 items-center flex justify-center";
 
 const stateClass = computed(() => {
-    return isConnected.value ? baseStateClass + " bg-transparent" : baseStateClass + " bg-red-ribbon-100";
+	return isConnected.value
+		? baseStateClass + " bg-transparent"
+		: baseStateClass + " bg-red-ribbon-100";
 });
-
-
 </script>

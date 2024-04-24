@@ -24,25 +24,25 @@
 
 
 <script setup lang="ts">
-import { X, CircleDot } from '@vicons/tabler'
+import { CircleDot, X } from "@vicons/tabler";
 
-let props = defineProps<{
-    name: string
-    activeTab: string
-}>()
+const props = defineProps<{
+	name: string;
+	activeTab: string;
+}>();
 
-let emit = defineEmits<{
-    (e: 'change-tab', name: string): void
-    (e: 'delete-tab', name: string): void
-}>()
+const emit = defineEmits<{
+	(e: "change-tab", name: string): void;
+	(e: "delete-tab", name: string): void;
+}>();
 
 const changeTab = () => {
-    console.log("change tab to", props.name)
-    emit('change-tab', props.name)
-}
+	console.log("change tab to", props.name);
+	emit("change-tab", props.name);
+};
 // FIXME: deleteTab is not working ?
 const deleteTab = () => {
-    console.log("delete tab", props.name)
-    emit('delete-tab', props.name)
-}
+	console.log("delete tab", props.name);
+	emit("delete-tab", props.name);
+};
 </script>

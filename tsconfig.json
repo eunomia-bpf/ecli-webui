@@ -1,44 +1,39 @@
 {
-  // "include": [
-  //   "wasm-bin/*.d.ts",
-  // ],
-  "files": [],
-  "types": [
-    {
-      "name": "types/emscripten",
-      "path": "./node_modules/@types/emscripten/index.d.ts"
-    },
-    // {
-    //   "name": "types/clangModule",
-    //   "path": "./wasm-bin/clang.d.ts"
-    // },
-  ],
-  "references": [
-    {
-      "path": "./tsconfig.node.json"
-    },
-    {
-      "path": "./tsconfig.app.json"
-    },
-    {
-      "path": "./tsconfig.vitest.json"
-    }
-  ],
-  "compilerOptions": {
-    // "allowJs": true,
-    // "noImplicitAny": false,
-    "types": [
-      "types/emscripten",
-    ],
-    "module": "esnext",
-    "moduleResolution": "node",
-    "strict": true,
-    "sourceMap": true,
-    "resolveJsonModule": true,
-    "esModuleInterop": true,
-    "lib": [
-      "esnext",
-      "dom"
-    ]
-  },
+	// "include": [
+	//   "wasm-bin/*.d.ts",
+	// ],
+	"files": [],
+	"types": [
+		{
+			"name": "types/emscripten",
+			"path": "./node_modules/@types/emscripten/index.d.ts"
+		}
+		// {
+		//   "name": "types/clangModule",
+		//   "path": "./wasm-bin/clang.d.ts"
+		// },
+	],
+	"references": [
+		{
+			"path": "./tsconfig.node.json"
+		},
+		{
+			"path": "./tsconfig.app.json"
+		},
+		{
+			"path": "./tsconfig.vitest.json"
+		}
+	],
+	"compilerOptions": {
+		// "allowJs": true,
+		// "noImplicitAny": false,
+		"types": ["types/emscripten"],
+		"module": "esnext",
+		"moduleResolution": "node",
+		"strict": true,
+		"sourceMap": true,
+		"resolveJsonModule": true,
+		"esModuleInterop": true,
+		"lib": ["esnext", "dom"]
+	}
 }

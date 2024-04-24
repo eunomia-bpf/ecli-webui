@@ -16,42 +16,45 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue';
+import { computed, ref } from "vue";
 
-let activeTab = ref('')
+const activeTab = ref("");
 
-let mod = computed({
-    get() { return props.tabs.get(activeTab.value) },
-    set(v) { props.tabs.set(activeTab.value, v!) }
-})
+const mod = computed({
+	get() {
+		return props.tabs.get(activeTab.value);
+	},
+	set(v) {
+		props.tabs.set(activeTab.value, v!);
+	},
+});
 
 const activeTabChange = (n: string) => {
-    activeTab.value = n
-}
+	activeTab.value = n;
+};
 
 const deleteTab = (t: string) => {
-    if (props.tabs.size == 0) return;
+	if (props.tabs.size == 0) return;
 
-    if (activeTab.value == t) {
-        activeTab.value == Array.from(props.tabs.keys())[0];
-    }
+	if (activeTab.value == t) {
+		activeTab.value == Array.from(props.tabs.keys())[0];
+	}
 
-    props.tabs.delete(t);
-}
+	props.tabs.delete(t);
+};
 
 // let tabs: Ref<Map<string, string>> = ref(new Map());
 
-let props = defineProps<{
-    tabs: Map<string, string>
-}>()
-
+const props = defineProps<{
+	tabs: Map<string, string>;
+}>();
 
 const editorMounted = (editor: any) => {
-    console.log('editor load complete', editor)
-    props.tabs
-        .set("tab1", "tab1 ctx")
-        .set("tab2", "tab2 ctx")
-        .set("tab3", "tab3 ctx");
-    activeTab.value = 'tab1';
-}
+	console.log("editor load complete", editor);
+	props.tabs
+		.set("tab1", "tab1 ctx")
+		.set("tab2", "tab2 ctx")
+		.set("tab3", "tab3 ctx");
+	activeTab.value = "tab1";
+};
 </script>

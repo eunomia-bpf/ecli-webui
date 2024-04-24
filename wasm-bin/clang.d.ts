@@ -4,7 +4,7 @@
 
 // This will merge to the existing EmscriptenModule interface from @types/emscripten
 declare interface ClangModule extends EmscriptenModule {
-    _main(argc: string[], argv: string[]): number;
+	_main(argc: string[], argv: string[]): number;
 }
 
 export default function init_clang_module(): ClangModule;

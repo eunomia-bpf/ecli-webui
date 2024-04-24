@@ -1,11 +1,10 @@
 <script setup lang="ts">
-
 const props = defineProps<{
-    ctx: Array<string>,
-}>()
+	ctx: Array<string>;
+}>();
 
 const formatString = (str: string) => {
-    return str.replace(/\n/g, '<br>');
+	return str.replace(/\n/g, "<br>");
 };
 </script>
 

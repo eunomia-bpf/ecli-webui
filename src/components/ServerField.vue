@@ -30,22 +30,18 @@
 </template>
 
 <script setup lang="ts">
-import ttl from '@/components/HeadTitle.vue'
-import { Add12Regular } from '@vicons/fluent'
-import { inject, type Ref } from 'vue'
-import { Server, } from '../components/serverInfo'
-import serverItem from './ServerItem.vue'
+import ttl from "@/components/HeadTitle.vue";
+import { Add12Regular } from "@vicons/fluent";
+import { type Ref, inject } from "vue";
+import type { Server } from "../components/serverInfo";
+import serverItem from "./ServerItem.vue";
 
-const servers = inject('servers') as Ref<Server[]>
+const servers = inject("servers") as Ref<Server[]>;
 
-let emit = defineEmits<{
-  (e: 'onServerChange', id: number): void
-}>()
-
-
+const emit = defineEmits<(e: "onServerChange", id: number) => void>();
 
 const updateOnServer = (id: number) => {
-  emit('onServerChange', id);
-  console.log(`Selected Server Updated -> ${id}`);
+	emit("onServerChange", id);
+	console.log(`Selected Server Updated -> ${id}`);
 };
 </script>

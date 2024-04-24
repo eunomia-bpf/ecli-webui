@@ -3,7 +3,7 @@ var Module = (() => {
   var _scriptDir = import.meta.url;
 
   return (
-    async function(moduleArg = {}) {
+    async (moduleArg = {}) => {
 
       var Module = moduleArg;
       var readyPromiseResolve, readyPromiseReject;
@@ -20,14 +20,14 @@ var Module = (() => {
       var ENVIRONMENT_IS_NODE = typeof process == "object" && typeof process.versions == "object" && typeof process.versions.node == "string";
       var scriptDirectory = ""; function locateFile(path) { if (Module["locateFile"]) { return Module["locateFile"](path, scriptDirectory) } return scriptDirectory + path }
       var read_, readAsync, readBinary; if (ENVIRONMENT_IS_NODE) {
-        const { createRequire: createRequire } = await import("module");
+        const { createRequire } = await import("module");
         var require = createRequire(import.meta.url);
         var fs = require("fs");
         var nodePath = require("path"); if (ENVIRONMENT_IS_WORKER) { scriptDirectory = nodePath.dirname(scriptDirectory) + "/" } else { scriptDirectory = require("url").fileURLToPath(new URL("./", import.meta.url)) } read_ = (filename, binary) => { filename = isFileURI(filename) ? new URL(filename) : nodePath.normalize(filename); return fs.readFileSync(filename, binary ? undefined : "utf8") }; readBinary = filename => {
           var ret = read_(filename, true); if (!ret.buffer) { ret = new Uint8Array(ret) } return ret
         }; readAsync = (filename, onload, onerror, binary = true) => { filename = isFileURI(filename) ? new URL(filename) : nodePath.normalize(filename); fs.readFile(filename, binary ? undefined : "utf8", (err, data) => { if (err) onerror(err); else onload(binary ? data.buffer : data) }) }; if (!Module["thisProgram"] && process.argv.length > 1) { thisProgram = process.argv[1].replace(/\\/g, "/") } arguments_ = process.argv.slice(2); quit_ = (status, toThrow) => { process.exitCode = status; throw toThrow }; Module["inspect"] = () => "[Emscripten Module object]"
       } else if (ENVIRONMENT_IS_WEB || ENVIRONMENT_IS_WORKER) {
-        if (ENVIRONMENT_IS_WORKER) { scriptDirectory = self.location.href } else if (typeof document != "undefined" && document.currentScript) { scriptDirectory = document.currentScript.src } if (_scriptDir) { scriptDirectory = _scriptDir } if (scriptDirectory.indexOf("blob:") !== 0) { scriptDirectory = scriptDirectory.substr(0, scriptDirectory.replace(/[?#].*/, "").lastIndexOf("/") + 1) } else { scriptDirectory = "" } {
+        if (ENVIRONMENT_IS_WORKER) { scriptDirectory = self.location.href } else if (typeof document != "undefined" && document.currentScript) { scriptDirectory = document.currentScript.src } if (_scriptDir) { scriptDirectory = _scriptDir } if (scriptDirectory.indexOf("blob:") !== 0) { scriptDirectory = scriptDirectory.substr(0, scriptDirectory.replace(/[?#].*/, "").lastIndexOf("/") + 1) } else { scriptDirectory = "" } 
           read_ = url => {
             var xhr = new XMLHttpRequest; xhr.open("GET", url, false); xhr.send(null); return xhr.responseText
           }; if (ENVIRONMENT_IS_WORKER) {
@@ -37,7 +37,6 @@ var Module = (() => {
           } readAsync = (url, onload, onerror) => {
             var xhr = new XMLHttpRequest; xhr.open("GET", url, true); xhr.responseType = "arraybuffer"; xhr.onload = () => { if (xhr.status == 200 || xhr.status == 0 && xhr.response) { onload(xhr.response); return } onerror() }; xhr.onerror = onerror; xhr.send(null)
           }
-        }
       } else { }
       var out = Module["print"] || console.log.bind(console);
       var err = Module["printErr"] || console.error.bind(console); Object.assign(Module, moduleOverrides); moduleOverrides = null; if (Module["arguments"]) arguments_ = Module["arguments"]; if (Module["thisProgram"]) thisProgram = Module["thisProgram"]; if (Module["quit"]) quit_ = Module["quit"];
@@ -72,7 +71,7 @@ var Module = (() => {
         if (!binary && typeof WebAssembly.instantiateStreaming == "function" && !isDataURI(binaryFile) && !isFileURI(binaryFile) && !ENVIRONMENT_IS_NODE && typeof fetch == "function") {
           return fetch(binaryFile, { credentials: "same-origin" }).then(response => {
             var result = WebAssembly.instantiateStreaming(response, imports);
-            return result.then(callback, function(reason) {
+            return result.then(callback, (reason) => {
               err(`wasm streaming compile failed: ${reason}`);
               err("falling back to ArrayBuffer instantiation");
               return instantiateArrayBuffer(binaryFile, imports, callback)
@@ -106,7 +105,7 @@ var Module = (() => {
         }, basename: path => {
           if (path === "/") return "/"; path = PATH.normalize(path); path = path.replace(/\/$/, "");
           var lastSlash = path.lastIndexOf("/"); if (lastSlash === -1) return path; return path.substr(lastSlash + 1)
-        }, join: function() {
+        }, join: () => {
           var paths = Array.prototype.slice.call(arguments); return PATH.normalize(paths.join("/"))
         }, join2: (l, r) => PATH.normalize(l + "/" + r)
       };
@@ -121,7 +120,7 @@ var Module = (() => {
       };
       var randomFill = view => (randomFill = initRandomFill())(view);
       var PATH_FS = {
-        resolve: function() {
+        resolve: () => {
           var resolvedPath = "", resolvedAbsolute = false; for (
             var i = arguments.length - 1; i >= -1 && !resolvedAbsolute; i--) {
             var path = i >= 0 ? arguments[i] : FS.cwd(); if (typeof path != "string") { throw new TypeError("Arguments to path.resolve must be strings") } else if (!path) { return "" } resolvedPath = path + "/" + resolvedPath; resolvedAbsolute = PATH.isAbs(path)
@@ -609,10 +608,9 @@ var Module = (() => {
             var doXHR = (from, to) => {
               if (from > to) throw new Error("invalid range (" + from + ", " + to + ") or no bytes requested!"); if (to > datalength - 1) throw new Error("only " + datalength + " bytes available! programmer error!");
               var xhr = new XMLHttpRequest; xhr.open("GET", url, false); if (datalength !== chunkSize) xhr.setRequestHeader("Range", "bytes=" + from + "-" + to); xhr.responseType = "arraybuffer"; if (xhr.overrideMimeType) { xhr.overrideMimeType("text/plain; charset=x-user-defined") } xhr.send(null); if (!(xhr.status >= 200 && xhr.status < 300 || xhr.status === 304)) throw new Error("Couldn't load " + url + ". Status: " + xhr.status); if (xhr.response !== undefined) { return new Uint8Array(xhr.response || []) } return intArrayFromString(xhr.responseText || "", true)
-            };
-            var lazyArray = this; lazyArray.setDataGetter(chunkNum => {
+            };this.setDataGetter(chunkNum => {
               var start = chunkNum * chunkSize;
-              var end = (chunkNum + 1) * chunkSize - 1; end = Math.min(end, datalength - 1); if (typeof lazyArray.chunks[chunkNum] == "undefined") { lazyArray.chunks[chunkNum] = doXHR(start, end) } if (typeof lazyArray.chunks[chunkNum] == "undefined") throw new Error("doXHR failed!"); return lazyArray.chunks[chunkNum]
+              var end = (chunkNum + 1) * chunkSize - 1; end = Math.min(end, datalength - 1); if (typeof this.chunks[chunkNum] == "undefined") { this.chunks[chunkNum] = doXHR(start, end) } if (typeof this.chunks[chunkNum] == "undefined") throw new Error("doXHR failed!"); return this.chunks[chunkNum]
             }); if (usesGzip || !datalength) { chunkSize = datalength = 1; datalength = this.getter(0).length; chunkSize = datalength; out("LazyFiles on gzip forces download of the whole file when length is accessed") } this._length = datalength; this._chunkSize = chunkSize; this.lengthKnown = true
           }; if (typeof XMLHttpRequest != "undefined") {
             if (!ENVIRONMENT_IS_WORKER) throw "Cannot do synchronous binary XHRs outside webworkers in modern browsers. Use --embed-file or --preload-file in emcc";
@@ -784,8 +782,8 @@ var Module = (() => {
       } function ___syscall_renameat(olddirfd, oldpath, newdirfd, newpath) { try { oldpath = SYSCALLS.getStr(oldpath); newpath = SYSCALLS.getStr(newpath); oldpath = SYSCALLS.calculateAt(olddirfd, oldpath); newpath = SYSCALLS.calculateAt(newdirfd, newpath); FS.rename(oldpath, newpath); return 0 } catch (e) { if (typeof FS == "undefined" || !(e.name === "ErrnoError")) throw e; return -e.errno } } function ___syscall_rmdir(path) { try { path = SYSCALLS.getStr(path); FS.rmdir(path); return 0 } catch (e) { if (typeof FS == "undefined" || !(e.name === "ErrnoError")) throw e; return -e.errno } } function ___syscall_stat64(path, buf) { try { path = SYSCALLS.getStr(path); return SYSCALLS.doStat(FS.stat, path, buf) } catch (e) { if (typeof FS == "undefined" || !(e.name === "ErrnoError")) throw e; return -e.errno } } function ___syscall_statfs64(path, size, buf) { try { path = SYSCALLS.getStr(path); HEAP32[buf + 4 >> 2] = 4096; HEAP32[buf + 40 >> 2] = 4096; HEAP32[buf + 8 >> 2] = 1e6; HEAP32[buf + 12 >> 2] = 5e5; HEAP32[buf + 16 >> 2] = 5e5; HEAP32[buf + 20 >> 2] = FS.nextInode; HEAP32[buf + 24 >> 2] = 1e6; HEAP32[buf + 28 >> 2] = 42; HEAP32[buf + 44 >> 2] = 2; HEAP32[buf + 36 >> 2] = 255; return 0 } catch (e) { if (typeof FS == "undefined" || !(e.name === "ErrnoError")) throw e; return -e.errno } } function ___syscall_symlink(target, linkpath) { try { target = SYSCALLS.getStr(target); linkpath = SYSCALLS.getStr(linkpath); FS.symlink(target, linkpath); return 0 } catch (e) { if (typeof FS == "undefined" || !(e.name === "ErrnoError")) throw e; return -e.errno } } function ___syscall_unlinkat(dirfd, path, flags) { try { path = SYSCALLS.getStr(path); path = SYSCALLS.calculateAt(dirfd, path); if (flags === 0) { FS.unlink(path) } else if (flags === 512) { FS.rmdir(path) } else { abort("Invalid flags passed to unlinkat") } return 0 } catch (e) { if (typeof FS == "undefined" || !(e.name === "ErrnoError")) throw e; return -e.errno } }
       var nowIsMonotonic = true;
       var __emscripten_get_now_is_monotonic = () => nowIsMonotonic;
-      var __emscripten_throw_longjmp = () => { throw Infinity };
-      var convertI32PairToI53Checked = (lo, hi) => hi + 2097152 >>> 0 < 4194305 - !!lo ? (lo >>> 0) + hi * 4294967296 : NaN; function __gmtime_js(time_low, time_high, tmPtr) {
+      var __emscripten_throw_longjmp = () => { throw Number.POSITIVE_INFINITY };
+      var convertI32PairToI53Checked = (lo, hi) => hi + 2097152 >>> 0 < 4194305 - !!lo ? (lo >>> 0) + hi * 4294967296 : Number.NaN; function __gmtime_js(time_low, time_high, tmPtr) {
         var time = convertI32PairToI53Checked(time_low, time_high);
         var date = new Date(time * 1e3); HEAP32[tmPtr >> 2] = date.getUTCSeconds(); HEAP32[tmPtr + 4 >> 2] = date.getUTCMinutes(); HEAP32[tmPtr + 8 >> 2] = date.getUTCHours(); HEAP32[tmPtr + 12 >> 2] = date.getUTCDate(); HEAP32[tmPtr + 16 >> 2] = date.getUTCMonth(); HEAP32[tmPtr + 20 >> 2] = date.getUTCFullYear() - 1900; HEAP32[tmPtr + 24 >> 2] = date.getUTCDay();
         var start = Date.UTC(date.getUTCFullYear(), 0, 1, 0, 0, 0, 0);
@@ -899,10 +897,9 @@ var Module = (() => {
         try {
           var rightsBase = 0;
           var rightsInheriting = 0;
-          var flags = 0; {
+          var flags = 0; 
             var stream = SYSCALLS.getStreamFromFD(fd);
-            var type = stream.tty ? 2 : FS.isDir(stream.mode) ? 3 : FS.isLink(stream.mode) ? 7 : 4
-          } HEAP8[pbuf >> 0] = type; HEAP16[pbuf + 2 >> 1] = flags; tempI64 = [rightsBase >>> 0, (tempDouble = rightsBase, +Math.abs(tempDouble) >= 1 ? tempDouble > 0 ? +Math.floor(tempDouble / 4294967296) >>> 0 : ~~+Math.ceil((tempDouble - +(~~tempDouble >>> 0)) / 4294967296) >>> 0 : 0)], HEAP32[pbuf + 8 >> 2] = tempI64[0], HEAP32[pbuf + 12 >> 2] = tempI64[1]; tempI64 = [rightsInheriting >>> 0, (tempDouble = rightsInheriting, +Math.abs(tempDouble) >= 1 ? tempDouble > 0 ? +Math.floor(tempDouble / 4294967296) >>> 0 : ~~+Math.ceil((tempDouble - +(~~tempDouble >>> 0)) / 4294967296) >>> 0 : 0)], HEAP32[pbuf + 16 >> 2] = tempI64[0], HEAP32[pbuf + 20 >> 2] = tempI64[1]; return 0
+            var type = stream.tty ? 2 : FS.isDir(stream.mode) ? 3 : FS.isLink(stream.mode) ? 7 : 4HEAP8[pbuf >> 0] = type; HEAP16[pbuf + 2 >> 1] = flags; tempI64 = [rightsBase >>> 0, (tempDouble = rightsBase, +Math.abs(tempDouble) >= 1 ? tempDouble > 0 ? +Math.floor(tempDouble / 4294967296) >>> 0 : ~~+Math.ceil((tempDouble - +(~~tempDouble >>> 0)) / 4294967296) >>> 0 : 0)], HEAP32[pbuf + 8 >> 2] = tempI64[0], HEAP32[pbuf + 12 >> 2] = tempI64[1]; tempI64 = [rightsInheriting >>> 0, (tempDouble = rightsInheriting, +Math.abs(tempDouble) >= 1 ? tempDouble > 0 ? +Math.floor(tempDouble / 4294967296) >>> 0 : ~~+Math.ceil((tempDouble - +(~~tempDouble >>> 0)) / 4294967296) >>> 0 : 0)], HEAP32[pbuf + 16 >> 2] = tempI64[0], HEAP32[pbuf + 20 >> 2] = tempI64[1]; return 0
         } catch (e) { if (typeof FS == "undefined" || !(e.name === "ErrnoError")) throw e; return e.errno }
       }
       var doReadv = (stream, iov, iovcnt, offset) => {
@@ -1005,7 +1002,7 @@ var Module = (() => {
         var size = lengthBytesUTF8(str) + 1;
         var ret = stackAlloc(size); stringToUTF8(str, ret, size); return ret
       };
-      var FSROOT = { staticInit: () => { FS.root = null; let opts = Module.ROOT && Module.ROOT.opts || {}; let type = Module.ROOT && Module.ROOT.type || "MEMFS"; if (typeof type === "string") { type = FS.filesystems[type] || eval(type) } else if (typeof type === "function") { type = type(Module) } FS.mount(type, opts, "/"); FSROOT.createDefaultMountPoints(); const restore_mkdir = FSROOT.safeMkdir(); FS.createDefaultDirectories(); FS.createDefaultDevices(); FS.createSpecialDirectories(); restore_mkdir() }, createDefaultMountPoints: () => { FS.mkdirTree("/dev"); FS.mount(MEMFS, {}, "/dev"); FS.mkdirTree("/proc/self"); FS.mount(MEMFS, {}, "/proc/self") }, safeMkdir: () => { const mkdir = FS.mkdir; FS.mkdir = (path, mode) => { try { return mkdir(path, mode) } catch { return FS.lookupPath(path, { follow: true }).node } }; return () => { FS.mkdir = mkdir } } };
+      var FSROOT = { staticInit: () => { FS.root = null; const opts = Module.ROOT && Module.ROOT.opts || {}; let type = Module.ROOT && Module.ROOT.type || "MEMFS"; if (typeof type === "string") { type = FS.filesystems[type] || eval(type) } else if (typeof type === "function") { type = type(Module) } FS.mount(type, opts, "/"); FSROOT.createDefaultMountPoints(); const restore_mkdir = FSROOT.safeMkdir(); FS.createDefaultDirectories(); FS.createDefaultDevices(); FS.createSpecialDirectories(); restore_mkdir() }, createDefaultMountPoints: () => { FS.mkdirTree("/dev"); FS.mount(MEMFS, {}, "/dev"); FS.mkdirTree("/proc/self"); FS.mount(MEMFS, {}, "/proc/self") }, safeMkdir: () => { const mkdir = FS.mkdir; FS.mkdir = (path, mode) => { try { return mkdir(path, mode) } catch { return FS.lookupPath(path, { follow: true }).node } }; return () => { FS.mkdir = mkdir } } };
       var allocateUTF8 = stringToNewUTF8;
       var FSNode = function(parent, name, mode, rdev) { if (!parent) { parent = this } this.parent = parent; this.mount = parent.mount; this.mounted = null; this.id = FS.nextInode++; this.name = name; this.mode = mode; this.node_ops = {}; this.stream_ops = {}; this.rdev = rdev };
       var readMode = 292 | 73;
@@ -1034,7 +1031,7 @@ var Module = (() => {
         var argv_ptr = argv; args.forEach(arg => { HEAPU32[argv_ptr >> 2] = stringToUTF8OnStack(arg); argv_ptr += 4 }); HEAPU32[argv_ptr >> 2] = 0; try {
           var ret = entryFunction(argc, argv); exitJS(ret, true); return ret
         } catch (e) { return handleException(e) }
-      } function run(args = arguments_) { if (runDependencies > 0) { return } preRun(); if (runDependencies > 0) { return } function doRun() { if (calledRun) return; calledRun = true; Module["calledRun"] = true; if (ABORT) return; initRuntime(); preMain(); readyPromiseResolve(Module); if (Module["onRuntimeInitialized"]) Module["onRuntimeInitialized"](); if (shouldRunNow) callMain(args); postRun() } if (Module["setStatus"]) { Module["setStatus"]("Running..."); setTimeout(function() { setTimeout(function() { Module["setStatus"]("") }, 1); doRun() }, 1) } else { doRun() } } if (Module["preInit"]) { if (typeof Module["preInit"] == "function") Module["preInit"] = [Module["preInit"]]; while (Module["preInit"].length > 0) { Module["preInit"].pop()() } }
+      } function run(args = arguments_) { if (runDependencies > 0) { return } preRun(); if (runDependencies > 0) { return } function doRun() { if (calledRun) return; calledRun = true; Module["calledRun"] = true; if (ABORT) return; initRuntime(); preMain(); readyPromiseResolve(Module); if (Module["onRuntimeInitialized"]) Module["onRuntimeInitialized"](); if (shouldRunNow) callMain(args); postRun() } if (Module["setStatus"]) { Module["setStatus"]("Running..."); setTimeout(() => { setTimeout(() => { Module["setStatus"]("") }, 1); doRun() }, 1) } else { doRun() } } if (Module["preInit"]) { if (typeof Module["preInit"] == "function") Module["preInit"] = [Module["preInit"]]; while (Module["preInit"].length > 0) { Module["preInit"].pop()() } }
       var shouldRunNow = true; if (Module["noInitialRun"]) shouldRunNow = false; run();
 
 

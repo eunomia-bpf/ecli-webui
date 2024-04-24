@@ -21,5 +21,5 @@
 </template>
 
 <script setup lang="ts">
-import { Square12Regular } from '@vicons/fluent'
+import { Square12Regular } from "@vicons/fluent";
 </script>
