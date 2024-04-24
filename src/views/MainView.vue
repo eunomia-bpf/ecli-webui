@@ -20,7 +20,8 @@
                     <div class="h-44 flex-grow overflow-auto rounded-md mb-1 mt-2 flex">
                         <ul class="list-none w-10 flex-grow">
                             <li v-for="t in servers[0].tasks" :key="t.name">
-                                <progItem :name="t.name" :id="t.id" :status="t.status" @change-log-task="updateOnLogTask" />
+                                <progItem :name="t.name" :id="t.id" :status="t.status"
+                                    @change-log-task="updateOnLogTask" />
                             </li>
                         </ul>
 
@@ -84,13 +85,13 @@ import { ecliApi } from "@/api";
 import ServerField from "@/components/ServerField.vue";
 import { Archive48Regular } from "@vicons/fluent";
 import {
-	type Ref,
-	onBeforeUnmount,
-	onMounted,
-	provide,
-	reactive,
-	ref,
-	watch,
+    type Ref,
+    onBeforeUnmount,
+    onMounted,
+    provide,
+    reactive,
+    ref,
+    watch,
 } from "vue";
 import EditorField from "../components/EditorField.vue";
 import upload from "../components/FileUpload.vue";
@@ -101,13 +102,13 @@ import csl from "../components/TheConsole.vue";
 import { Server } from "../components/serverInfo";
 
 onMounted(async () => {
-	// TODO: integrate clang wasm module!
-	// let mod = await init_clang_module();
-	// let mod = await create_ffmpeg_module();
-	// console.log("clang module loaded");
-	// console.log(mod._main(["2"], ["-v"]));
-	// console.log(mod._malloc(2));
-	// console.log(mod._add(2, 3));
+    // TODO: integrate clang wasm module!
+    // let mod = await init_clang_module();
+    // let mod = await create_ffmpeg_module();
+    // console.log("clang module loaded");
+    // console.log(mod._main(["2"], ["-v"]));
+    // console.log(mod._malloc(2));
+    // console.log(mod._add(2, 3));
 });
 
 const servers = reactive([new Server("Local", "http://127.0.0.1:8527")]);
@@ -115,22 +116,22 @@ const servers = reactive([new Server("Local", "http://127.0.0.1:8527")]);
 import type { StartTaskRequest } from "../api-client/api";
 
 const standbyBinary: Ref<StartTaskRequest> = ref({
-	program_data_buf: "",
-	program_type: "wasm",
+    program_data_buf: "",
+    program_type: "wasm",
 });
 
 const tabs: Ref<Map<string, string>> = ref(new Map());
 
 const updateStandbyBinary = (r: StartTaskRequest) => {
-	standbyBinary.value = r;
-	console.log("standby binary ready");
+    standbyBinary.value = r;
+    console.log("standby binary ready");
 };
 
 const addToTab = async (n: string, c: string) => {
-	// ?
-	console.log(`name: ${n}\nctx: ${c}`);
-	tabs.value.set(n, c);
-	console.log(`sent ${n} into editor`);
+    // ?
+    console.log(`name: ${n}\nctx: ${c}`);
+    tabs.value.set(n, c);
+    console.log(`sent ${n} into editor`);
 };
 
 provide("servers", servers);
@@ -140,7 +141,7 @@ const initialConsoleValue = ["select a program to view logs"];
 const consoleCtx: Ref<string[]> = ref(initialConsoleValue);
 
 const cleanConsole = async () => {
-	consoleCtx.value = initialConsoleValue;
+    consoleCtx.value = initialConsoleValue;
 };
 
 const downloadDisabled = ref<boolean>(true);
@@ -148,21 +149,21 @@ const downloadDisabled = ref<boolean>(true);
 let timer: number;
 
 const updateTasksOfServers = async () => {
-	servers.forEach(async (s) => {
-		await s.updateTasks();
-	});
+    for (const s of servers) {
+        await s.updateTasks();
+    }
 };
 
 // update Tasks List
 watch(() => servers, updateTasksOfServers, { deep: true });
 
 onBeforeUnmount(() => {
-	clearInterval(timer);
+    clearInterval(timer);
 });
 
 onMounted(() => {
-	updateTasksOfServers();
-	timer = setInterval(updateTasksOfServers, 5000);
+    updateTasksOfServers();
+    timer = setInterval(updateTasksOfServers, 5000);
 });
 
 // handle program
@@ -170,38 +171,38 @@ onMounted(() => {
 const onServer: Ref<number> = ref(0);
 
 const updateOnServer = (id: number) => {
-	onServer.value = id;
+    onServer.value = id;
 };
 
 const onLogTask: Ref<number> = ref(0);
 
 const updateOnLogTask = (id: number) => {
-	onLogTask.value = id;
-	console.log(`Selected Task Updated -> ${onLogTask.value}`);
+    onLogTask.value = id;
+    console.log(`Selected Task Updated -> ${onLogTask.value}`);
 };
 
 const updateLogCtx = async () => {
-	servers[0].tasks.forEach(async (t) => {
-		if (t.id === onLogTask.value) {
-			console.log(`Updating Log Context for ${t.name}`);
-			ecliApi.getTaskLogByID({ id: t.id }).then((log) => {
-				const logCtx = log.data.map((l) => {
-					const logCtx = l.log;
-					return logCtx.log;
-				});
+    for (const t of servers[0].tasks) {
+        if (t.id === onLogTask.value) {
+            console.log(`Updating Log Context for ${t.name}`);
+            ecliApi.getTaskLogByID({ id: t.id }).then((log) => {
+                const logCtx = log.data.map((l) => {
+                    const logCtx = l.log;
+                    return logCtx.log;
+                });
 
-				// flush console display
-				consoleCtx.value = logCtx;
+                // flush console display
+                consoleCtx.value = logCtx;
 
-				// TODO: follow log
-			});
-		}
-	});
+                // TODO: follow log
+            });
+        }
+    }
 };
 const startProgram = async () => {
-	console.log("starting program");
-	await ecliApi.startTask(standbyBinary.value);
-	console.log("program started");
+    console.log("starting program");
+    await ecliApi.startTask(standbyBinary.value);
+    console.log("program started");
 };
 
 watch(onLogTask, updateLogCtx, { deep: true });
