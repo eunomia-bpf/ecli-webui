@@ -2,10 +2,10 @@ default:
   @just --choose
 
 gen-api:
-	bun run gen-api
+	pnpm run gen-api
 
 build: gen-api
-	bun run build
+	pnpm run build
 
 dev: gen-api
-	bun run dev
+	pnpm run dev
