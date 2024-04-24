@@ -25,7 +25,8 @@
 		}
 	],
 	"compilerOptions": {
-		// "allowJs": true,
+		"allowJs": true,
+		"declaration": true,
 		// "noImplicitAny": false,
 		"types": ["types/emscripten"],
 		"module": "esnext",

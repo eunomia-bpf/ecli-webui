@@ -84,6 +84,7 @@
 import { ecliApi } from "@/api";
 import ServerField from "@/components/ServerField.vue";
 import { Archive48Regular } from "@vicons/fluent";
+import Emception from "emception/emception.js"; // TODO: add a declare file for emception
 import {
     type Ref,
     onBeforeUnmount,
@@ -100,8 +101,12 @@ import ttl from "../components/HeadTitle.vue";
 import progItem from "../components/ProgItem.vue";
 import csl from "../components/TheConsole.vue";
 import { Server } from "../components/serverInfo";
-
 onMounted(async () => {
+    // const emception = new Emception.default();
+    // const globalThis = { emception: emception };
+    // console.log(globalThis);
+    const emception = new Emception.default();
+    await emception.init();
     // TODO: integrate clang wasm module!
     // let mod = await init_clang_module();
     // let mod = await create_ffmpeg_module();
