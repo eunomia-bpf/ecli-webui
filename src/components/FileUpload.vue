@@ -5,62 +5,62 @@
         <div class="text-gray-100 py-1 font-medium">Upload</div>
     </VueUploadComponent>
 </template>
-  
+
 <script setup lang="ts">
-import VueUploadComponent from "vue-upload-component";
-import type { StartTaskRequest } from "../api-client/api";
+import VueUploadComponent from 'vue-upload-component'
+import type { StartTaskRequest } from '../api-client/api';
 
 const emit = defineEmits<{
-	(e: "update-standby", r: StartTaskRequest): void;
-	(e: "add-to-tab", name: string, ctx: string): void;
-}>();
+    (e: 'update-standby', r: StartTaskRequest): void
+    (e: 'add-to-tab', name: string, ctx: string): void
+}>()
 
 const buf2base64 = (u8aBuf: Uint8Array) => {
-	return btoa(
-		u8aBuf.reduce((data, byte) => data + String.fromCharCode(byte), ""),
-	);
-};
+    return btoa(
+        u8aBuf.reduce((data, byte) => data + String.fromCharCode(byte), '')
+    );
+}
 const isTxtSrc = (t: string) => {
-	const srcFileTypes = ["text/x-c++src", "text/x-csrc", "text/x-chdr"];
-	return srcFileTypes.includes(t);
-};
+    const srcFileTypes = ["text/x-c++src", "text/x-csrc", "text/x-chdr"];
+    return srcFileTypes.includes(t)
+}
 const fileUploaded = async (e: any) => {
-	const files = e.target.files || e.dataTransfer!.files;
+    const files = e.target.files || e.dataTransfer?.files;
 
-	// recogniz file type
-	const buf = await files[0].arrayBuffer();
-	const u8aBuf = new Uint8Array(buf);
-	const trunedFileHead = [...u8aBuf].slice(0, 4);
+    // recogniz file type
+    const buf = await files[0].arrayBuffer();
+    const u8aBuf = new Uint8Array(buf);
+    const trunedFileHead = [...u8aBuf].slice(0, 4);
 
-	if (
-		trunedFileHead.map((x) => x.toString(16).padStart(2, "0")).join("") ==
-		"0061736d"
-	) {
-		// wasm bin sig
-		console.log("uploaded wasm binary, commit into standby slot");
+    if (trunedFileHead.map(x => x.toString(16).padStart(2, '0'))
+        .join('') == "0061736d") { // wasm bin sig
+        console.log("uploaded wasm binary, commit into standby slot");
 
-		const encoded = buf2base64(u8aBuf);
-		emit("update-standby", { program_data_buf: encoded, program_type: "wasm" });
-	} else if (files[0].type == "application/json") {
-		// json
+        const encoded = buf2base64(u8aBuf);
+        emit('update-standby', { program_data_buf: encoded, program_type: "wasm" });
 
-		emit("update-standby", {
-			program_data_buf: buf2base64(u8aBuf),
-			program_type: "json",
-		});
-	} else if (files[0] == "application/x-tar") {
-		// tar
+    } else if (files[0].type === "application/json") {
+        // json
 
-		emit("update-standby", {
-			program_data_buf: buf2base64(u8aBuf),
-			program_type: "tar",
-		});
-	} else if (isTxtSrc(files[0].type)) {
-		// source file, send to editor
-		console.log(`adding ${files[0].name}`);
-		emit("add-to-tab", files[0].name, files[0].text());
-	} else {
-		console.log("unresolve file type");
-	}
-};
+        emit('update-standby', {
+            program_data_buf: buf2base64(u8aBuf),
+            program_type: "json"
+        });
+
+    } else if (files[0] === "application/x-tar") {
+        // tar
+
+        emit('update-standby', {
+            program_data_buf: buf2base64(u8aBuf),
+            program_type: "tar"
+        });
+    } else if (isTxtSrc(files[0].type)) {
+        // source file, send to editor
+        console.log(`adding ${files[0].name}`);
+        emit('add-to-tab', files[0].name, files[0].text())
+    } else {
+        console.log("unresolve file type");
+    }
+}
+
 </script>
