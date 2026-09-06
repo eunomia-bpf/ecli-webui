@@ -37,6 +37,10 @@ export default defineConfig({
 			emception: fileURLToPath(
 				new URL("./node_modules/emception", import.meta.url),
 			),
+			// custom BPF-enabled llvm-box glue, pairs with public/wasm-bin/wasm.pack.br
+			"llvm-box-custom": fileURLToPath(
+				new URL("./wasm-bin/llvm-box.mjs", import.meta.url),
+			),
 			// quicknode: fileURLToPath(
 			// 	new URL("./emception/build/quicknode", import.meta.url),
 			// ),

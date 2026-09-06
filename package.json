@@ -2,7 +2,7 @@
 	"name": "ecli-web",
 	"version": "0.0.0",
 	"private": true,
-	"packageManager": "pnpm@10.0.0",
+	"packageManager": "pnpm@10.34.5",
 	"scripts": {
 		"dev": "vite",
 		"build": "run-p type-check build-only",
@@ -73,6 +73,5 @@
 		"vitest": "^4.0.16",
 		"vue-codemirror": "^6.1.1",
 		"vue-tsc": "^3.2.1"
-	},
-	"packageManager": "pnpm@10.0.0"
+	}
 }

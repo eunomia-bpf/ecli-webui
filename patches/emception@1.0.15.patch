@@ -1,5 +1,5 @@
 diff --git a/FileSystem.mjs b/FileSystem.mjs
-index 92812b7e7f748188048c882e9b46c2ec4ad0866d..e6e8e9d1f397ae15bf0e82a0b4814e1c412b5442 100755
+index 92812b7..e6e8e9d 100755
 --- a/FileSystem.mjs
 +++ b/FileSystem.mjs
 @@ -27,7 +27,12 @@ export default class FileSystem extends EmProcess {
@@ -16,3 +16,34 @@ index 92812b7e7f748188048c882e9b46c2ec4ad0866d..e6e8e9d1f397ae15bf0e82a0b4814e1c
              this.exec(["wasm-package", "unpack", "/tmp/archive.pack"], { cwd });
              this.FS.unlink("/tmp/archive.pack");
          } else {
+diff --git a/packs.mjs b/packs.mjs
+index 006562d..af4a604 100644
+--- a/packs.mjs
++++ b/packs.mjs
+@@ -34,7 +34,6 @@ import emscripten_system_lib_libc_musl_src from "./packages/emscripten_system_li
+ import emscripten_system_lib_libcxx_include from "./packages/emscripten_system_lib_libcxx_include.pack.br";
+ import emscripten_system_lib_libcxx_src from "./packages/emscripten_system_lib_libcxx_src.pack.br";
+ import emscripten_third_party from "./packages/emscripten_third_party.pack.br";
+-import wasm from "./packages/wasm.pack.br";
+ export default {
+     "cpython": cpython,
+     "emscripten": emscripten,
+@@ -71,5 +70,5 @@ export default {
+     "emscripten_system_lib_libcxx_include": emscripten_system_lib_libcxx_include,
+     "emscripten_system_lib_libcxx_src": emscripten_system_lib_libcxx_src,
+     "emscripten_third_party": emscripten_third_party,
+-    "wasm": wasm,
++    "wasm": "/wasm-bin/wasm.pack.br",
+ };
+\ No newline at end of file
+diff --git a/LlvmBoxProcess.mjs b/LlvmBoxProcess.mjs
+index edd2d87..35f3e93 100755
+--- a/LlvmBoxProcess.mjs
++++ b/LlvmBoxProcess.mjs
+@@ -1,5 +1,5 @@
+ import BoxProcess from "./BoxProcess.mjs";
+-import LlvmBoxModule from "./llvm/llvm-box.mjs";
++import LlvmBoxModule from "llvm-box-custom";
+ 
+ const tool_mapping = {
+     "clang++": "clang",
