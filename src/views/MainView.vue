@@ -34,13 +34,13 @@
             <!-- RIGHT SIDE -->
             <div class="col-span-4 rounded-md px-2 h-full flex flex-col">
 
-                <div class="flex justify-start gap-3 h-10 items-center">
+                <div class="flex justify-start gap-3 h-10 items-center w-full">
 
-                    <div class="flex flex-row space-x-1 items-center flex-grow p-1">
-                        <upload @update-standby="updateStandbyBinary" @add-to-tab="addToTab" />
+                    <upload @update-standby="updateStandbyBinary" @add-to-tab="addToTab" />
+
+                    <div class="flex justify-end gap-3 h-full flex-grow px-2 items-center">
                         <btn :disabled="downloadDisabled" @click="downloadProgram">Download</btn>
-                        <btn :disabled="standbyBinary.program_data_buf == ''" @click="startProgram">Run
-                        </btn>
+                        <btn :disabled="standbyBinary.program_data_buf == ''" @click="startProgram">Run</btn>
                         <btn @click="compileProgram">Compile</btn>
                     </div>
                 </div>
