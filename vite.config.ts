@@ -49,7 +49,6 @@ export default defineConfig({
 	build: {
 		chunkSizeWarningLimit: 16000,
 		rollupOptions: {
-			external: [/\.mjs$/],
 		},
 	},
 
