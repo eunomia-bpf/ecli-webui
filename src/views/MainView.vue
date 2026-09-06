@@ -159,45 +159,36 @@ onMounted(async () => {
     }).catch(e => console.error("Failed to load examples", e));
 
     try {
-        const emception = new Emception();
-        emception.onstdout = (s) => consoleCtx.value.push(s);
-        emception.onstderr = (s) => consoleCtx.value.push(s);
-        
-        let activeEmception = emception;
+        // Always clear IndexedDB before init to prevent stale cache ENOENT errors.
+        // Emception's IDBFS cache can become corrupt across page reloads when the
+        // in-memory FS state diverges from the persisted IndexedDB state.
         try {
-            await emception.init();
-        } catch(e) {
-            consoleCtx.value.push("Init failed, clearing cache and retrying...");
-            console.warn("Emception init failed, clearing IndexedDB:", e);
-            // Clear all IndexedDB databases to remove corrupt cache
-            try {
-                const dbs = await window.indexedDB.databases();
+            const dbs = await window.indexedDB.databases();
+            if (dbs.length > 0) {
                 await Promise.all(dbs.map(db => new Promise<void>((resolve) => {
                     if (db.name) {
                         const req = window.indexedDB.deleteDatabase(db.name);
                         req.onsuccess = req.onerror = () => resolve();
                     } else { resolve(); }
                 })));
-            } catch(_) {}
-            
-            // Retry with a fresh instance
-            const emception2 = new Emception();
-            emception2.onstdout = (s) => consoleCtx.value.push(s);
-            emception2.onstderr = (s) => consoleCtx.value.push(s);
-            await emception2.init();
-            activeEmception = emception2;
-            consoleCtx.value.push("Emception initialized (after cache clear).");
-        }
+                consoleCtx.value.push("Cleared browser cache.");
+            }
+        } catch(_) {}
+
+        const emception = new Emception();
+        emception.onstdout = (s) => consoleCtx.value.push(s);
+        emception.onstderr = (s) => consoleCtx.value.push(s);
+        await emception.init();
         
-        (window as any).emception = activeEmception;
+        (window as any).emception = emception;
         consoleCtx.value.push("Emception initialized.");
         
         consoleCtx.value.push("Fetching system BPF headers...");
         try {
-            if (activeEmception.fileSystem && activeEmception.fileSystem.FS) {
-                try { activeEmception.fileSystem.FS.mkdir("/bpf"); } catch(e){}
+            if (emception.fileSystem && emception.fileSystem.FS) {
+                try { emception.fileSystem.FS.mkdir("/bpf"); } catch(e){}
             } else {
-                try { activeEmception.fileSystem.mkdirTree("/bpf"); } catch(e){}
+                try { emception.fileSystem.mkdirTree("/bpf"); } catch(e){}
             }
             const headers = [
                 "/vmlinux.h",
@@ -212,7 +203,7 @@ onMounted(async () => {
                     const res = await fetch("/bpf_headers" + h);
                     if (res.ok) {
                         const content = await res.text();
-                        activeEmception.fileSystem.writeFile(h, content);
+                        emception.fileSystem.writeFile(h, content);
                     }
                 } catch(e) {
                     console.error("Failed to fetch", h, e);
