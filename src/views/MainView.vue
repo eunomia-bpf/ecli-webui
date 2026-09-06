@@ -101,6 +101,18 @@
             </table>
         </div>
     </el-dialog>
+        <!-- Global Loading Overlay -->
+    <div v-if="!isEnvironmentReady" class="fixed inset-0 z-50 flex flex-col items-center justify-center bg-slate-900/40 backdrop-blur-sm transition-opacity duration-300" :class="showLoadingOverlay ? 'opacity-100' : 'opacity-0'">
+        <div v-if="showLoadingOverlay" class="bg-white p-6 rounded-2xl shadow-2xl flex flex-col items-center">
+            <svg class="animate-spin h-10 w-10 text-sprout-600 mb-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+            <h3 class="text-lg font-semibold text-slate-800">Initializing Environment</h3>
+            <p class="text-sm text-slate-500 mt-1">Setting up WebAssembly compiler and BPF headers...</p>
+        </div>
+    </div>
+
 </template>
 
 

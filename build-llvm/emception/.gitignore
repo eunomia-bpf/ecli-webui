@@ -1,0 +1,9 @@
+# build artifacts
+build/
+upstream/
+
+# build cache files
+**/*.idx
+
+# demo
+demo/node_modules
