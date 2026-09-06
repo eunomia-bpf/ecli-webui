@@ -159,29 +159,6 @@ onMounted(async () => {
     }).catch(e => console.error("Failed to load examples", e));
 
     try {
-        // Clear all IndexedDB databases safely
-        try {
-            await new Promise((resolve, reject) => {
-                window.indexedDB.databases().then(dbs => {
-                    let count = dbs.length;
-                    if (count === 0) return resolve(undefined);
-                    for (const db of dbs) {
-                        if (db.name) {
-                            let req = window.indexedDB.deleteDatabase(db.name);
-                            req.onsuccess = req.onerror = () => {
-                                count--;
-                                if (count === 0) resolve(undefined);
-                            };
-                        } else {
-                            count--;
-                            if (count === 0) resolve(undefined);
-                        }
-                    }
-                }).catch(resolve);
-            });
-            consoleCtx.value.push("Cleared IndexedDB cache.");
-        } catch(e) {}
-
         const emception = new Emception();
         emception.onstdout = (s) => consoleCtx.value.push(s);
         emception.onstderr = (s) => consoleCtx.value.push(s);
