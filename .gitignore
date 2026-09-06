@@ -1,4 +1,5 @@
 # Logs
+/.agents
 logs
 *.log
 npm-debug.log*
@@ -29,6 +30,8 @@ coverage
 
 /emception
 
-/src/api-client
+# /src/api-client
 /wasm-bin/clang.wasm
 /wasm-bin/llvm-box.wasm
+
+/.devenv

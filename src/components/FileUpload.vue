@@ -1,65 +1,68 @@
 <template>
+    <!-- TODO: refactor ( a more simple way? -->
     <VueUploadComponent name="Upload file" @change="fileUploaded" drop="true"
-        class="w-1/6 h-5/6 rounded-sm bg-kamenozoki-100 hover:bg-kamenozoki-400">
-        <div class="text-gray-100 py-1 font-medium">Upload</div>
+        class="inline-flex items-center justify-center px-4 py-2 text-sm font-medium tracking-wide transition-all duration-300 ease-out rounded-md active:scale-95 cursor-pointer min-w-max ml-1 mr-2 bg-sprout-300 text-sprout-950 shadow hover:shadow-md hover:bg-sprout-400 hover:-translate-y-0.5">
+        <span class="flex items-center justify-center h-full"><el-icon class="mr-1 mt-[2px]" size="16"><ArrowUpload20Regular /></el-icon>Upload</span>
     </VueUploadComponent>
 </template>
-  
-<script setup lang="ts">
-import { type StartTaskRequest } from '../api-client/api';
-import VueUploadComponent from 'vue-upload-component'
 
-let emit = defineEmits<{
-    (e: 'update-standby', r: StartTaskRequest): void
-    (e: 'add-to-tab', name: string, ctx: string): void
-}>()
+<script setup lang="ts">
+import VueUploadComponent from "vue-upload-component";
+import { ArrowUpload20Regular } from "@vicons/fluent";
+import type { StartTaskRequest } from "../api-client/api";
+
+const emit = defineEmits<{
+	(e: "update-standby", r: StartTaskRequest): void;
+	(e: "add-to-tab", name: string, ctx: string): void;
+}>();
 
 const buf2base64 = (u8aBuf: Uint8Array) => {
-    return btoa(
-        u8aBuf.reduce((data, byte) => data + String.fromCharCode(byte), '')
-    );
-}
-const isTxtSrc = (t: string) => {
-    let srcFileTypes = ["text/x-c++src", "text/x-csrc", "text/x-chdr"];
-    return srcFileTypes.includes(t)
-}
+	return btoa(
+		u8aBuf.reduce((data, byte) => data + String.fromCharCode(byte), ""),
+	);
+};
+const isTxtSrc = (f: File) => {
+	const srcFileTypes = ["text/x-c++src", "text/x-csrc", "text/x-chdr"];
+	return srcFileTypes.includes(f.type) || f.name.endsWith(".c") || f.name.endsWith(".h");
+};
 const fileUploaded = async (e: any) => {
-    let files = e.target.files || e.dataTransfer!.files;
+	const files = e.target.files || e.dataTransfer?.files;
 
-    // recogniz file type
-    let buf = await files[0].arrayBuffer();
-    let u8aBuf = new Uint8Array(buf);
-    let trunedFileHead = [...u8aBuf].slice(0, 4);
+	// recogniz file type
+	const buf = await files[0].arrayBuffer();
+	const u8aBuf = new Uint8Array(buf);
+	const trunedFileHead = [...u8aBuf].slice(0, 4);
 
-    if (trunedFileHead.map(x => x.toString(16).padStart(2, '0'))
-        .join('') == "0061736d") { // wasm bin sig
-        console.log("uploaded wasm binary, commit into standby slot");
+	if (
+		trunedFileHead.map((x) => x.toString(16).padStart(2, "0")).join("") ==
+		"0061736d"
+	) {
+		// wasm bin sig
+		console.log("uploaded wasm binary, commit into standby slot");
 
-        let encoded = buf2base64(u8aBuf);
-        emit('update-standby', { program_data_buf: encoded, program_type: "wasm" });
+		const encoded = buf2base64(u8aBuf);
+		emit("update-standby", { program_data_buf: encoded, program_type: "wasm" });
+	} else if (files[0].type === "application/json") {
+		// json
 
-    } else if (files[0].type == "application/json") {
-        // json
+		emit("update-standby", {
+			program_data_buf: buf2base64(u8aBuf),
+			program_type: "json",
+		});
+	} else if (files[0] === "application/x-tar") {
+		// tar
 
-        emit('update-standby', {
-            program_data_buf: buf2base64(u8aBuf),
-            program_type: "json"
-        });
-
-    } else if (files[0] == "application/x-tar") {
-        // tar
-
-        emit('update-standby', {
-            program_data_buf: buf2base64(u8aBuf),
-            program_type: "tar"
-        });
-    } else if (isTxtSrc(files[0].type)) {
-        // source file, send to editor
-        console.log(`adding ${files[0].name}`);
-        emit('add-to-tab', files[0].name, files[0].text())
-    } else {
-        console.log("unresolve file type");
-    }
-}
-
+		emit("update-standby", {
+			program_data_buf: buf2base64(u8aBuf),
+			program_type: "tar",
+		});
+	} else if (isTxtSrc(files[0])) {
+		// source file, send to editor
+		console.log(`adding ${files[0].name}`);
+		const text = await files[0].text();
+		emit("add-to-tab", files[0].name, text);
+	} else {
+		console.log("unresolve file type");
+	}
+};
 </script>

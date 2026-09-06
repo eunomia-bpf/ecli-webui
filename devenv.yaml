@@ -1,0 +1,5 @@
+inputs:
+  rust-overlay:
+    url: github:oxalica/rust-overlay
+  wrangler:
+    url: github:ryand56/wrangler
