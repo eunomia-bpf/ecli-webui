@@ -1,51 +1,64 @@
-# ecli-web
+# eunomia-bpf Playground
 
-Front-end for ecli.
+The `eunomia-bpf` playground is a web application that lets you write, compile, and package eBPF programs in your browser. It does not use a backend server.
 
-Current Avaliable feature:
-+ Control ecli-server running on local by dev proxy
-+ Upload and online editing
+The playground uses the Emception library to run the Clang compiler directly in the browser with WebAssembly. You can edit C code, compile it, and download the standard Eunomia JSON package.
 
-## Project Setup
+## Features
 
-```sh
-bun install
+- **Online code editor**: Write eBPF programs and custom header files.
+- **In-browser compiler**: Compile eBPF programs to WebAssembly without a remote server.
+- **Example programs**: Load and learn from common eBPF examples.
+- **Virtual file system**: View and manage the memory file system (MEMFS) that the compiler uses.
+- **Package export**: Download the compiled `package.json` to run with the `ecli` tool.
+
+## Setup and build
+
+You can build the application with `pnpm` or Docker.
+
+### Build with Docker
+
+Run the Docker script to build the image and extract the static files:
+
+```bash
+./build-in-docker.sh
 ```
 
-### Generate OpenAPI codes
+The script puts the built files in the `dist` directory. To start a local web server with Docker, use this command:
 
-```sh
-bun run gen-api
+```bash
+docker run -d -p 8080:80 --name my-ecli-webui ecli-webui
 ```
 
-### Compile and Hot-Reload for Development
+Then open `http://localhost:8080` in your browser.
 
-```sh
-bun dev
+### Build with pnpm
+
+If you have Node.js and pnpm installed, you can run the application locally.
+
+Install the dependencies:
+
+```bash
+pnpm install
 ```
 
-### Type-Check, Compile and Minify for Production
+Start the development server:
 
-```sh
-bun run build
+```bash
+pnpm run dev
 ```
 
-### Lint with [ESLint](https://eslint.org/)
+Build the files for production:
 
-```sh
-bun run lint
+```bash
+pnpm run build
 ```
 
-## Teck Stack:
+## Technology stack
 
-Base: `Vue3 / vite`  
-Style: `Tailwindcss`  
-State manage: `Pinia`
+- **Framework**: Vue 3 and Vite
+- **Style**: Tailwind CSS
+- **Compiler**: Emception (browser-based Clang/LLVM)
+- **Editor**: Monaco Editor
 
-## Todo
-
-- [ ] Integrate Online Build
-
-- [ ] CROS fork of ecli-server
-
-- [x] Improve view
+For more data about the compiler architecture, read [online-compile.md](online-compile.md).
