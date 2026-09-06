@@ -11,7 +11,7 @@ int BPF_PROG(do_unlinkat, int dfd, struct filename* name) {
     pid_t pid;
 
     pid = bpf_get_current_pid_tgid() >> 32;
-    bpf_printk("fentry: pid = %d, filename = %s\n", pid, name->name);
+    bpf_printk("fentry: pid = %d, filename = %s\n", pid, name->iname);
     return 0;
 }
 
@@ -20,7 +20,7 @@ int BPF_PROG(do_unlinkat_exit, int dfd, struct filename* name, long ret) {
     pid_t pid;
 
     pid = bpf_get_current_pid_tgid() >> 32;
-    bpf_printk("fexit: pid = %d, filename = %s, ret = %ld\n", pid, name->name,
+    bpf_printk("fexit: pid = %d, filename = %s, ret = %ld\n", pid, name->iname,
                ret);
     return 0;
 }

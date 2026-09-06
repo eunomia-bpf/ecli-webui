@@ -1,4 +1,15 @@
 <template>
+    <!-- Global Loading Overlay -->
+    <div v-if="isLoadingExample" class="fixed inset-0 z-[100] flex items-center justify-center bg-black bg-opacity-40 backdrop-blur-sm transition-opacity">
+        <div class="bg-white p-6 rounded-xl shadow-xl flex flex-col items-center gap-4">
+            <svg class="animate-spin h-10 w-10 text-sprout-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+            <div class="text-slate-700 font-medium text-lg">Fetching files...</div>
+            <div class="text-slate-500 text-sm">Please wait while the environment is prepared</div>
+        </div>
+    </div>
     <div class="flex h-screen w-screen bg-customBg-100 p-3 relative">
         <div class="flex w-8 mr-2 items-start justify-center">
             <div class="whitespace-nowrap -rotate-90 transform mt-32 text-zinc-400 text-3xl">
@@ -283,10 +294,13 @@ const cleanConsole = async () => {
 // --- Examples & FS Viewer ---
 const examplesList = ref<Array<{name: string, files: string[]}>>([]);
 const selectedExample = ref('');
+const isLoadingExample = ref(false);
 
 const loadExample = async () => {
     const ex = examplesList.value.find(e => e.name === selectedExample.value);
     if (!ex) return;
+    
+    isLoadingExample.value = true;
     
     // Clear UI tabs
     tabs.value.clear();
@@ -323,6 +337,7 @@ const loadExample = async () => {
         }
     }
     consoleCtx.value.push(`Loaded example ${ex.name} into editor.`);
+    isLoadingExample.value = false;
 };
 
 const showFsModal = ref(false);
@@ -466,7 +481,7 @@ const compileProgram = async () => {
     consoleCtx.value.push(`Compiling ${mainC}...`);
     
     try {
-        const result = await emception._run_process(['/usr/bin/clang', '-g', '-O2', '-target', 'bpf', '-I/', '-c', '/' + mainC, '-o', '/main.bpf.o'], {
+        const result = await emception._run_process(['/usr/bin/clang', '-g', '-O2', '-target', 'bpf', '-D__TARGET_ARCH_x86', '-I/', '-c', '/' + mainC, '-o', '/main.bpf.o'], {
             print: (s: string) => consoleCtx.value.push(s),
             printErr: (s: string) => consoleCtx.value.push(s),
             cwd: "/"
