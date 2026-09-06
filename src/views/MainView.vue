@@ -6,33 +6,7 @@
             </div>
 
         </div>
-        <div class="grid grid-cols-6 gap-2 w-full">
-
-            <!-- LEFT SIDE -->
-            <div class="col-span-2 grid grid-rows-4 w-full h-full gap-2">
-
-                <!--Servers-->
-                <ServerField :servers="servers" :on-server-id="onServer" @on-server-change="updateOnServer" />
-
-
-                <div class="row-span-3 bg-white rounded-xl shadow-sm border border-slate-200 flex flex-col overflow-hidden">
-                    <ttl>Program</ttl>
-                    <div class="h-44 flex-grow overflow-auto rounded-md mb-1 mt-2 flex">
-                        <ul class="list-none w-10 flex-grow">
-                            <li v-for="t in servers[0].tasks" :key="t.name">
-                                <progItem :name="t.name" :id="t.id" :status="t.status"
-                                    @change-log-task="updateOnLogTask" />
-                            </li>
-                        </ul>
-
-                    </div>
-
-
-                </div>
-            </div>
-
-            <!-- RIGHT SIDE -->
-            <div class="col-span-4 rounded-md px-2 h-full flex flex-col">
+        <div class="w-full h-full flex flex-col rounded-md px-2">
 
                 <div class="flex justify-start gap-3 h-10 items-center w-full">
 
@@ -63,10 +37,6 @@
                     <div class="flex justify-end gap-3 h-full flex-grow px-2 items-center">
                         <btn :disabled="downloadDisabled" @click="downloadProgram">
                             <el-icon class="mr-1" size="16"><ArrowDownload20Regular /></el-icon>Download
-                        </btn>
-                        <btn :disabled="standbyBinary.program_data_buf == ''" @click="startProgram">
-                            <el-icon class="mr-1" size="16"><Play20Regular /></el-icon>
-                            Run {{ compiledProgramName ? `(${compiledProgramName})` : '' }}
                         </btn>
                         <btn :disabled="isLoadingExample" @click="compileProgram">
                             <el-icon class="mr-1" size="16"><Wrench20Regular /></el-icon>Compile
@@ -101,7 +71,6 @@
 
                 </div>
             </div>
-        </div>
 
     </div>
     
@@ -136,12 +105,9 @@
 
 
 <script setup lang="ts">
-import { ecliApi } from "@/api";
-import ServerField from "@/components/ServerField.vue";
 import { 
     Archive48Regular,
     ArrowDownload20Regular,
-    Play20Regular,
     Wrench20Regular,
     Folder20Regular,
     Document20Regular
@@ -162,9 +128,7 @@ import EditorField from "../components/EditorField.vue";
 import upload from "../components/FileUpload.vue";
 import btn from "../components/GeneralBtn.vue";
 import ttl from "../components/HeadTitle.vue";
-import progItem from "../components/ProgItem.vue";
 import csl from "../components/TheConsole.vue";
-import { Server } from "../components/serverInfo";
 onMounted(async () => {
     try {
         // Clear all IndexedDB databases safely
@@ -248,11 +212,7 @@ onMounted(async () => {
     }
 });
 
-const servers = reactive([new Server("Local", "http://127.0.0.1:8527")]);
-
-import type { StartTaskRequest } from "../api-client/api";
-
-const standbyBinary: Ref<StartTaskRequest> = ref({
+const standbyBinary: Ref<{ program_data_buf: string; program_type: string }> = ref({
     program_data_buf: "",
     program_type: "wasm",
 });
@@ -260,7 +220,7 @@ const compiledProgramName = ref("");
 
 const tabs: Ref<Map<string, string>> = ref(new Map());
 
-const updateStandbyBinary = (r: StartTaskRequest) => {
+const updateStandbyBinary = (r: { program_data_buf: string; program_type: string }) => {
     standbyBinary.value = r;
     console.log("standby binary ready");
 };
@@ -271,8 +231,6 @@ const addToTab = async (n: string, c: string) => {
     tabs.value.set(n, c);
     console.log(`sent ${n} into editor`);
 };
-
-provide("servers", servers);
 
 const initialConsoleValue = ["select a program to view logs"];
 
@@ -399,65 +357,6 @@ const downloadProgram = () => {
     }
 };
 
-let timer: number;
-
-const updateTasksOfServers = async () => {
-    for (const s of servers) {
-        await s.updateTasks();
-    }
-};
-
-// update Tasks List
-watch(() => servers, updateTasksOfServers, { deep: true });
-
-onBeforeUnmount(() => {
-    clearInterval(timer);
-});
-
-onMounted(() => {
-    updateTasksOfServers();
-    timer = setInterval(updateTasksOfServers, 5000);
-});
-
-// handle program
-
-const onServer: Ref<number> = ref(0);
-
-const updateOnServer = (id: number) => {
-    onServer.value = id;
-};
-
-const onLogTask: Ref<number> = ref(0);
-
-const updateOnLogTask = (id: number) => {
-    onLogTask.value = id;
-    console.log(`Selected Task Updated -> ${onLogTask.value}`);
-};
-
-const updateLogCtx = async () => {
-    for (const t of servers[0].tasks) {
-        if (t.id === onLogTask.value) {
-            console.log(`Updating Log Context for ${t.name}`);
-            ecliApi.getTaskLogByID({ id: t.id }).then((log) => {
-                const logCtx = log.data.map((l) => {
-                    const logCtx = l.log;
-                    return logCtx.log;
-                });
-
-                // flush console display
-                consoleCtx.value = logCtx;
-
-                // TODO: follow log
-            });
-        }
-    }
-};
-const startProgram = async () => {
-    console.log("starting program");
-    await ecliApi.startTask(standbyBinary.value);
-    console.log("program started");
-};
-
 const compileProgram = async () => {
     consoleCtx.value.push("Starting compilation...");
     
@@ -534,6 +433,5 @@ const compileProgram = async () => {
     }
 };
 
-watch(onLogTask, updateLogCtx, { deep: true });
 </script>
 
