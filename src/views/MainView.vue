@@ -65,7 +65,8 @@
                             <el-icon class="mr-1" size="16"><ArrowDownload20Regular /></el-icon>Download
                         </btn>
                         <btn :disabled="standbyBinary.program_data_buf == ''" @click="startProgram">
-                            <el-icon class="mr-1" size="16"><Play20Regular /></el-icon>Run
+                            <el-icon class="mr-1" size="16"><Play20Regular /></el-icon>
+                            Run {{ compiledProgramName ? `(${compiledProgramName})` : '' }}
                         </btn>
                         <btn :disabled="isLoadingExample" @click="compileProgram">
                             <el-icon class="mr-1" size="16"><Wrench20Regular /></el-icon>Compile
@@ -255,6 +256,7 @@ const standbyBinary: Ref<StartTaskRequest> = ref({
     program_data_buf: "",
     program_type: "wasm",
 });
+const compiledProgramName = ref("");
 
 const tabs: Ref<Map<string, string>> = ref(new Map());
 
@@ -298,6 +300,13 @@ const loadExample = async () => {
     if (!ex) return;
     
     isLoadingExample.value = true;
+    
+    // Clear standby binary and program name
+    standbyBinary.value = {
+        program_data_buf: "",
+        program_type: "wasm",
+    };
+    compiledProgramName.value = "";
     
     // Clear UI tabs
     tabs.value.clear();
@@ -514,6 +523,7 @@ const compileProgram = async () => {
                 program_data_buf: eunomiaPkgBase64,
                 program_type: "wasm",
             };
+            compiledProgramName.value = mainC;
             
             consoleCtx.value.push("Compilation successful! Program is ready to run.");
         } else {
