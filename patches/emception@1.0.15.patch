@@ -1,18 +1,49 @@
 diff --git a/FileSystem.mjs b/FileSystem.mjs
-index 92812b7e7f748188048c882e9b46c2ec4ad0866d..e6e8e9d1f397ae15bf0e82a0b4814e1c412b5442 100755
+index 92812b7e7f748188048c882e9b46c2ec4ad0866d..6fe008571ad01adc14a064581f3e24b36982a091 100755
 --- a/FileSystem.mjs
 +++ b/FileSystem.mjs
-@@ -27,7 +27,12 @@ export default class FileSystem extends EmProcess {
+@@ -27,11 +27,25 @@ export default class FileSystem extends EmProcess {
      unpack(path, cwd = "/") {
          if (path.endsWith(".br")) {
              // it's a brotli file, decompress it first
 -            this._brotli.exec(["brotli", "--decompress", "-o", "/tmp/archive.pack", path], { cwd: "/tmp/" });
+-            this.exec(["wasm-package", "unpack", "/tmp/archive.pack"], { cwd });
+-            this.FS.unlink("/tmp/archive.pack");
 +            let res = this._brotli.exec(["brotli", "--decompress", "-o", "/tmp/archive.pack", path], { cwd: "/tmp/" });
 +            if (res.returncode !== 0) {
 +                // brotli failed. The browser likely auto-decompressed it.
-+                this.exec(["wasm-package", "unpack", path], { cwd });
++                let res2 = this.exec(["wasm-package", "unpack", path], { cwd });
++                if (res2.returncode !== 0) {
++                    throw new Error("wasm-package unpack failed on " + path + ": " + res2.stderr);
++                }
 +                return;
 +            }
-             this.exec(["wasm-package", "unpack", "/tmp/archive.pack"], { cwd });
-             try { this.FS.unlink("/tmp/archive.pack"); } catch(e) {}
++            let res3 = this.exec(["wasm-package", "unpack", "/tmp/archive.pack"], { cwd });
++            if (res3.returncode !== 0) {
++                throw new Error("wasm-package unpack failed on archive.pack: " + res3.stderr);
++            }
++            try { this.FS.unlink("/tmp/archive.pack"); } catch(e) {}
          } else {
+-            this.exec(["wasm-package", "unpack", path], { cwd });
++            let res4 = this.exec(["wasm-package", "unpack", path], { cwd });
++            if (res4.returncode !== 0) {
++                throw new Error("wasm-package unpack failed on " + path + ": " + res4.stderr);
++            }
+         }
+     }
+ 
+@@ -80,7 +94,14 @@ export default class FileSystem extends EmProcess {
+                         this.writeFile(path, data);
+                     }
+                 } catch (e) {
++                    // If unpack fails (e.g. stale/corrupt IndexedDB cache),
++                    // delete the cached file and retry with a fresh download.
+                     this.#lazyLoadsDone.delete(url);
++                    try {
++                        if (this.exists(cache_file)) {
++                            this.FS.unlink(cache_file);
++                        }
++                    } catch (_) {}
+                     throw e;
+                 }
+             });
