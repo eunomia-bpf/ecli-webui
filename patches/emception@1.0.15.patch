@@ -14,5 +14,5 @@ index 92812b7e7f748188048c882e9b46c2ec4ad0866d..e6e8e9d1f397ae15bf0e82a0b4814e1c
 +                return;
 +            }
              this.exec(["wasm-package", "unpack", "/tmp/archive.pack"], { cwd });
-             this.FS.unlink("/tmp/archive.pack");
+             try { this.FS.unlink("/tmp/archive.pack"); } catch(e) {}
          } else {
