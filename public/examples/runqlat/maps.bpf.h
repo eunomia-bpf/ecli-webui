@@ -4,7 +4,9 @@
 #define __MAPS_BPF_H
 
 #include <bpf/bpf_helpers.h>
-#include <asm-generic/errno.h>
+#ifndef EEXIST
+#define EEXIST 17
+#endif
 
 static __always_inline void* bpf_map_lookup_or_try_init(void* map,
                                                         const void* key,
