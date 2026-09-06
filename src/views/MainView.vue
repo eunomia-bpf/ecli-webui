@@ -36,14 +36,12 @@
 
                 <div class="flex justify-start gap-3 h-10 items-center">
 
-                    <upload @update-standby="updateStandbyBinary" @add-to-tab="addToTab" />
-
-                    <div class="flex justify-end gap-3 h-full w-full px-2 items-center">
-                        <btn :disabled="downloadDisabled" class="bg-kamenozoki-300" @click="downloadProgram">Download</btn>
-                        <btn :disabled="standbyBinary.program_data_buf == ''" class="bg-kamenozoki-300"
-                            @click="startProgram">Run
+                    <div class="flex flex-row space-x-1 items-center flex-grow p-1">
+                        <upload @update-standby="updateStandbyBinary" @add-to-tab="addToTab" />
+                        <btn :disabled="downloadDisabled" @click="downloadProgram">Download</btn>
+                        <btn :disabled="standbyBinary.program_data_buf == ''" @click="startProgram">Run
                         </btn>
-                        <btn class="bg-kamenozoki-300" @click="compileProgram">Compile</btn>
+                        <btn @click="compileProgram">Compile</btn>
                     </div>
                 </div>
 

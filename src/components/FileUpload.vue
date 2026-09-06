@@ -1,7 +1,7 @@
 <template>
     <!-- TODO: refactor ( a more simple way? -->
     <VueUploadComponent name="Upload file" @change="fileUploaded" drop="true"
-        class="inline-flex items-center justify-center px-4 py-1.5 text-sm font-medium text-white transition-all duration-200 ease-in-out rounded-md shadow-sm bg-kamenozoki-300 hover:shadow hover:brightness-110 active:scale-95 cursor-pointer min-w-max ml-1 mr-2">
+        class="inline-flex items-center justify-center px-4 py-2 text-sm font-medium text-white transition-all duration-200 ease-in-out rounded-full shadow-sm bg-kamenozoki-400 hover:shadow-md hover:bg-kamenozoki-300 active:scale-95 cursor-pointer min-w-max ml-1 mr-2">
         <div class="py-1">Upload</div>
     </VueUploadComponent>
 </template>

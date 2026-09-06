@@ -10,14 +10,21 @@
         </div>
 
         <!-- MONACO -->
-        <div class="flex-grow relative">
-            <monacoEditor class="absolute inset-0" v-model="mod" language="c" @editor-mounted="editorMounted" :read-only="false" />
+        <div class="flex-grow relative bg-slate-50">
+            <monacoEditor v-show="props.tabs.size > 0" class="absolute inset-0" v-model="mod" language="c" @editor-mounted="editorMounted" :read-only="false" />
+            <div v-show="props.tabs.size === 0" class="absolute inset-0 flex flex-col items-center justify-center text-slate-400">
+                <Archive48Regular class="w-16 h-16 mb-4 opacity-50" />
+                <p class="text-lg font-medium">No program selected</p>
+                <p class="text-sm mt-1">Select a program from the left or upload a file to start</p>
+            </div>
         </div>
     </div>
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from "vue";
+import { computed, ref, watch } from "vue";
+import { Archive48Regular } from "@vicons/fluent";
+import tabItem from "./TabItem.vue";
 
 const activeTab = ref("");
 
@@ -26,7 +33,9 @@ const mod = computed({
 		return props.tabs.get(activeTab.value);
 	},
 	set(v) {
-		props.tabs.set(activeTab.value, v!);
+		if (activeTab.value && v !== undefined) {
+			props.tabs.set(activeTab.value, v);
+		}
 	},
 });
 
@@ -38,24 +47,26 @@ const deleteTab = (t: string) => {
 	if (props.tabs.size == 0) return;
 
 	if (activeTab.value == t) {
-		activeTab.value == Array.from(props.tabs.keys())[0];
+		const keys = Array.from(props.tabs.keys());
+		const nextTab = keys.find(k => k !== t);
+		activeTab.value = nextTab || "";
 	}
 
 	props.tabs.delete(t);
 };
 
-// let tabs: Ref<Map<string, string>> = ref(new Map());
-
 const props = defineProps<{
 	tabs: Map<string, string>;
 }>();
 
+watch(() => props.tabs.size, (newSize) => {
+	if (newSize > 0 && !activeTab.value) {
+		activeTab.value = Array.from(props.tabs.keys())[0];
+	}
+});
+
 const editorMounted = (editor: any) => {
-	console.log("editor load complete", editor);
-	props.tabs
-		.set("tab1", "tab1 ctx")
-		.set("tab2", "tab2 ctx")
-		.set("tab3", "tab3 ctx");
-	activeTab.value = "tab1";
+	console.log("editor load complete");
 };
 </script>
+
