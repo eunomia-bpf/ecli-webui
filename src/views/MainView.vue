@@ -86,7 +86,7 @@
                         </template>
                     </ttl>
 
-                    <div class="w-full h-4 overflow-x-auto px-1 flex-grow rounded-md">
+                    <div ref="consoleContainer" class="w-full h-4 overflow-auto px-1 flex-grow rounded-md pb-2">
                         <csl :ctx="consoleCtx" at="logAt" />
                     </div>
 
@@ -147,6 +147,7 @@ import {
     ref,
     computed,
     watch,
+    nextTick
 } from "vue";
 import EditorField from "../components/EditorField.vue";
 import upload from "../components/FileUpload.vue";
@@ -265,6 +266,14 @@ provide("servers", servers);
 const initialConsoleValue = ["select a program to view logs"];
 
 const consoleCtx: Ref<string[]> = ref(initialConsoleValue);
+const consoleContainer = ref<HTMLElement | null>(null);
+
+watch(consoleCtx, async () => {
+    await nextTick();
+    if (consoleContainer.value) {
+        consoleContainer.value.scrollTop = consoleContainer.value.scrollHeight;
+    }
+}, { deep: true });
 
 const cleanConsole = async () => {
     consoleCtx.value = initialConsoleValue;
