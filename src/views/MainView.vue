@@ -276,7 +276,7 @@ watch(consoleCtx, async () => {
 }, { deep: true });
 
 const cleanConsole = async () => {
-    consoleCtx.value = initialConsoleValue;
+    consoleCtx.value.splice(0, consoleCtx.value.length, "select a program to view logs");
 };
 
 // --- Examples & FS Viewer ---
