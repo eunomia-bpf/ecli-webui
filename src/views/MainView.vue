@@ -55,7 +55,7 @@
                         <template #extra>
                             <el-popover trigger="hover">
                                 <template #reference>
-                                    <button text @click="cleanConsole">
+                                    <button class="cursor-pointer bg-transparent hover:bg-slate-200 p-1 rounded-md transition-colors" @click="cleanConsole">
                                         <el-icon size="20" color="#255359">
                                             <Archive48Regular />
                                         </el-icon>
