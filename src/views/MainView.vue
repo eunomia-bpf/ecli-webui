@@ -39,9 +39,15 @@
                     <upload @update-standby="updateStandbyBinary" @add-to-tab="addToTab" />
 
                     <div class="flex justify-end gap-3 h-full flex-grow px-2 items-center">
-                        <btn :disabled="downloadDisabled" @click="downloadProgram"><el-icon class="mr-1.5" size="14"><ArrowDownload16Regular /></el-icon> Download</btn>
-                        <btn :disabled="standbyBinary.program_data_buf == ''" @click="startProgram"><el-icon class="mr-1.5" size="14"><Play16Regular /></el-icon> Run</btn>
-                        <btn @click="compileProgram"><el-icon class="mr-1.5" size="14"><Wrench16Regular /></el-icon> Compile</btn>
+                        <btn :disabled="downloadDisabled" @click="downloadProgram">
+                            <el-icon class="mr-1" size="16"><ArrowDownload20Regular /></el-icon>Download
+                        </btn>
+                        <btn :disabled="standbyBinary.program_data_buf == ''" @click="startProgram">
+                            <el-icon class="mr-1" size="16"><Play20Regular /></el-icon>Run
+                        </btn>
+                        <btn @click="compileProgram">
+                            <el-icon class="mr-1" size="16"><Wrench20Regular /></el-icon>Compile
+                        </btn>
                     </div>
                 </div>
 
@@ -81,7 +87,12 @@
 <script setup lang="ts">
 import { ecliApi } from "@/api";
 import ServerField from "@/components/ServerField.vue";
-import { Archive48Regular, ArrowDownload16Regular, Play16Regular, Wrench16Regular } from "@vicons/fluent";
+import { 
+    Archive48Regular,
+    ArrowDownload20Regular,
+    Play20Regular,
+    Wrench20Regular
+} from "@vicons/fluent";
 import Emception from "emception/emception.js"; // TODO: add a declare file for emception
 import {
     type Ref,
