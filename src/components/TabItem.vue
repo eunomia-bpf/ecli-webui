@@ -3,12 +3,12 @@
         :class="[
             'group relative flex items-center h-9 px-3 min-w-[120px] max-w-[200px] cursor-pointer transition-colors border-r border-slate-200',
             name === activeTab 
-                ? 'bg-white text-slate-800 border-t-2 border-t-kamenozoki-300' 
+                ? 'bg-white text-slate-800 border-t-2 border-t-indigo-500' 
                 : 'bg-slate-100 text-slate-500 hover:bg-slate-200 border-t-2 border-t-transparent'
         ]">
         
         <!-- File Icon (optional, using CircleDot to denote code) -->
-        <el-icon size="14" class="mr-2 shrink-0" :color="name === activeTab ? '#376B6D' : '#94a3b8'">
+        <el-icon size="14" class="mr-2 shrink-0" :color="name === activeTab ? '#6366f1' : '#94a3b8'">
             <CircleDot />
         </el-icon>
 
