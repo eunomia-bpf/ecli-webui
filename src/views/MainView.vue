@@ -1,15 +1,4 @@
 <template>
-    <!-- Global Loading Overlay -->
-    <div v-if="isLoadingExample" class="fixed inset-0 z-[100] flex items-center justify-center bg-black bg-opacity-40 backdrop-blur-sm transition-opacity">
-        <div class="bg-white p-6 rounded-xl shadow-xl flex flex-col items-center gap-4">
-            <svg class="animate-spin h-10 w-10 text-sprout-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-            </svg>
-            <div class="text-slate-700 font-medium text-lg">Fetching files...</div>
-            <div class="text-slate-500 text-sm">Please wait while the environment is prepared</div>
-        </div>
-    </div>
     <div class="flex h-screen w-screen bg-customBg-100 p-3 relative">
         <div class="flex w-8 mr-2 items-start justify-center">
             <div class="whitespace-nowrap -rotate-90 transform mt-32 text-zinc-400 text-3xl">
@@ -62,6 +51,14 @@
                     <btn @click="viewFileSystem" title="View Virtual File System">
                         <el-icon class="mr-1" size="16"><Folder20Regular /></el-icon>FS Info
                     </btn>
+                    
+                    <div class="flex items-center gap-1.5 transition-opacity duration-200 ml-1" :class="isLoadingExample ? 'opacity-100' : 'opacity-0'">
+                        <svg class="animate-spin h-4 w-4 text-sprout-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                        <span class="text-xs text-sprout-700 font-medium">Loading files...</span>
+                    </div>
 
                     <div class="flex justify-end gap-3 h-full flex-grow px-2 items-center">
                         <btn :disabled="downloadDisabled" @click="downloadProgram">
@@ -70,7 +67,7 @@
                         <btn :disabled="standbyBinary.program_data_buf == ''" @click="startProgram">
                             <el-icon class="mr-1" size="16"><Play20Regular /></el-icon>Run
                         </btn>
-                        <btn @click="compileProgram">
+                        <btn :disabled="isLoadingExample" @click="compileProgram">
                             <el-icon class="mr-1" size="16"><Wrench20Regular /></el-icon>Compile
                         </btn>
                     </div>
