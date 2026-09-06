@@ -6,3 +6,5 @@ allowBuilds:
   vue-demi: set this to true or false
 patchedDependencies:
   emception@1.0.15: patches/emception@1.0.15.patch
+packages:
+  - '.'
