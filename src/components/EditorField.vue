@@ -60,7 +60,9 @@ const props = defineProps<{
 }>();
 
 watch(() => props.tabs.size, (newSize) => {
-	if (newSize > 0 && !activeTab.value) {
+	if (newSize === 0) {
+		activeTab.value = "";
+	} else if (newSize > 0 && !props.tabs.has(activeTab.value)) {
 		activeTab.value = Array.from(props.tabs.keys())[0];
 	}
 });

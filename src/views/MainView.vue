@@ -287,6 +287,29 @@ const loadExample = async () => {
     const ex = examplesList.value.find(e => e.name === selectedExample.value);
     if (!ex) return;
     
+    // Clear UI tabs
+    tabs.value.clear();
+    
+    // Clean MEMFS of any custom files before loading new ones
+    if ((window as any).emception) {
+        const FS = (window as any).emception.fileSystem.FS;
+        if (FS) {
+            try {
+                const items = FS.readdir('/');
+                for (const item of items) {
+                    if (item !== '.' && item !== '..' && item !== 'vmlinux.h') {
+                        const stat = FS.stat('/' + item);
+                        if (!FS.isDir(stat.mode)) {
+                            FS.unlink('/' + item);
+                        }
+                    }
+                }
+            } catch (e) {
+                console.error("Failed to clean MEMFS", e);
+            }
+        }
+    }
+    
     for (const file of ex.files) {
         try {
             const res = await fetch(`/examples/${ex.name}/${file}`);
