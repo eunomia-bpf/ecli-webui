@@ -72,5 +72,6 @@
 		"vitest": "^4.0.16",
 		"vue-codemirror": "^6.1.1",
 		"vue-tsc": "^3.2.1"
-	}
+	},
+	"packageManager": "pnpm@10.0.0"
 }
