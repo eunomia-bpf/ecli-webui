@@ -1,8 +1,8 @@
 <template>
-    <div class="bg-white rounded-md mb-1 h-4/6 mt-1 flex flex-col">
+    <div class="bg-white rounded-xl shadow-sm border border-slate-200 mb-2 h-4/6 mt-1 flex flex-col overflow-hidden">
         <!-- TABS -->
-        <div class="h-8 rounded-t-md px-0.5 overflow-x-auto bg-white flex items-center">
-            <ul class="flex justify-start h-full items-center flex-grow gap-1">
+        <div class="h-9 bg-slate-100 flex items-end overflow-x-auto border-b border-slate-200 hide-scrollbar">
+            <ul class="flex justify-start h-full items-center flex-grow">
                 <li v-for="i in props.tabs.keys()" :key="i">
                     <tabItem :name="i" :activeTab="activeTab" @change-tab="activeTabChange" @delete-tab="deleteTab" />
                 </li>
@@ -10,8 +10,9 @@
         </div>
 
         <!-- MONACO -->
-        <monacoEditor class="h-full" v-model="mod" language="c" width="100%" height="100%" @editor-mounted="editorMounted"
-            :read-only="false" />
+        <div class="flex-grow relative">
+            <monacoEditor class="absolute inset-0" v-model="mod" language="c" @editor-mounted="editorMounted" :read-only="false" />
+        </div>
     </div>
 </template>
 

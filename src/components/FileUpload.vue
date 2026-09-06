@@ -1,8 +1,8 @@
 <template>
     <!-- TODO: refactor ( a more simple way? -->
     <VueUploadComponent name="Upload file" @change="fileUploaded" drop="true"
-        class="w-1/6 h-5/6 rounded-md bg-kamenozoki-100 hover:bg-kamenozoki-400">
-        <div class="text-gray-100 py-1 font-medium">Upload</div>
+        class="inline-flex items-center justify-center px-4 py-1.5 text-sm font-medium text-white transition-all duration-200 ease-in-out rounded-md shadow-sm bg-kamenozoki-300 hover:shadow hover:brightness-110 active:scale-95 cursor-pointer min-w-max ml-1 mr-2">
+        <div class="py-1">Upload</div>
     </VueUploadComponent>
 </template>
 
@@ -20,9 +20,9 @@ const buf2base64 = (u8aBuf: Uint8Array) => {
 		u8aBuf.reduce((data, byte) => data + String.fromCharCode(byte), ""),
 	);
 };
-const isTxtSrc = (t: string) => {
+const isTxtSrc = (f: File) => {
 	const srcFileTypes = ["text/x-c++src", "text/x-csrc", "text/x-chdr"];
-	return srcFileTypes.includes(t);
+	return srcFileTypes.includes(f.type) || f.name.endsWith(".c") || f.name.endsWith(".h");
 };
 const fileUploaded = async (e: any) => {
 	const files = e.target.files || e.dataTransfer?.files;
@@ -55,10 +55,11 @@ const fileUploaded = async (e: any) => {
 			program_data_buf: buf2base64(u8aBuf),
 			program_type: "tar",
 		});
-	} else if (isTxtSrc(files[0].type)) {
+	} else if (isTxtSrc(files[0])) {
 		// source file, send to editor
 		console.log(`adding ${files[0].name}`);
-		emit("add-to-tab", files[0].name, files[0].text());
+		const text = await files[0].text();
+		emit("add-to-tab", files[0].name, text);
 	} else {
 		console.log("unresolve file type");
 	}

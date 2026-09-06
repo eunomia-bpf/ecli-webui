@@ -1,0 +1,8 @@
+allowBuilds:
+  '@parcel/watcher': set this to true or false
+  bun: set this to true or false
+  esbuild: set this to true or false
+  iltorb: set this to true or false
+  vue-demi: set this to true or false
+patchedDependencies:
+  emception@1.0.15: patches/emception@1.0.15.patch

@@ -1,5 +1,5 @@
 <template>
-  <div class="row-span-1 bg-white flex flex-col rounded-md">
+  <div class="row-span-1 bg-white flex flex-col rounded-xl shadow-sm border border-slate-200 overflow-hidden">
     <ttl>
       Server
       <template #extra>

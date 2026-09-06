@@ -1,0 +1,18 @@
+diff --git a/FileSystem.mjs b/FileSystem.mjs
+index 92812b7e7f748188048c882e9b46c2ec4ad0866d..e6e8e9d1f397ae15bf0e82a0b4814e1c412b5442 100755
+--- a/FileSystem.mjs
++++ b/FileSystem.mjs
+@@ -27,7 +27,12 @@ export default class FileSystem extends EmProcess {
+     unpack(path, cwd = "/") {
+         if (path.endsWith(".br")) {
+             // it's a brotli file, decompress it first
+-            this._brotli.exec(["brotli", "--decompress", "-o", "/tmp/archive.pack", path], { cwd: "/tmp/" });
++            let res = this._brotli.exec(["brotli", "--decompress", "-o", "/tmp/archive.pack", path], { cwd: "/tmp/" });
++            if (res.returncode !== 0) {
++                // brotli failed. The browser likely auto-decompressed it.
++                this.exec(["wasm-package", "unpack", path], { cwd });
++                return;
++            }
+             this.exec(["wasm-package", "unpack", "/tmp/archive.pack"], { cwd });
+             this.FS.unlink("/tmp/archive.pack");
+         } else {

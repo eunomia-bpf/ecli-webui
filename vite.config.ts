@@ -10,6 +10,7 @@ const proxyAddr: string = "http://10.0.0.15:8527";
 
 // https://vitejs.dev/config/
 export default defineConfig({
+	assetsInclude: ['**/*.br'],
 	plugins: [
 		vue(),
 		AutoImport({
@@ -27,6 +28,7 @@ export default defineConfig({
 	],
 	optimizeDeps: {
 		include: [`monaco-editor/esm/vs/editor/editor.worker`],
+		exclude: ['emception'],
 	},
 	resolve: {
 		alias: {
