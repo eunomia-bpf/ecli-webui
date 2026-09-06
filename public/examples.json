@@ -1,0 +1,101 @@
+[
+  {
+    "name": "bashreadline",
+    "files": [
+      "bashreadline.bpf.c",
+      "bashreadline.h"
+    ]
+  },
+  {
+    "name": "bootstrap",
+    "files": [
+      "bootstrap.bpf.c",
+      "bootstrap.h"
+    ]
+  },
+  {
+    "name": "fentry-link",
+    "files": [
+      "fentry-link.bpf.c"
+    ]
+  },
+  {
+    "name": "kprobe-link",
+    "files": [
+      "kprobe-link.bpf.c"
+    ]
+  },
+  {
+    "name": "lsm-connect",
+    "files": [
+      "lsm-connect.bpf.c"
+    ]
+  },
+  {
+    "name": "mdflush",
+    "files": [
+      "core_fixes.h",
+      "mdflush.bpf.c",
+      "mdflush.h"
+    ]
+  },
+  {
+    "name": "minimal",
+    "files": [
+      "minimal.bpf.c"
+    ]
+  },
+  {
+    "name": "opensnoop",
+    "files": [
+      "opensnoop.bpf.c",
+      "opensnoop.h"
+    ]
+  },
+  {
+    "name": "profile",
+    "files": [
+      "profile.bpf.c",
+      "profile.h"
+    ]
+  },
+  {
+    "name": "runqlat",
+    "files": [
+      "bits.bpf.h",
+      "core_fixes.bpf.h",
+      "maps.bpf.h",
+      "runqlat.bpf.c",
+      "runqlat.h"
+    ]
+  },
+  {
+    "name": "sigsnoop",
+    "files": [
+      "ewasm-skel.h",
+      "sigsnoop.bpf.c",
+      "sigsnoop.c",
+      "sigsnoop.h",
+      "sigsnoop.wasm.h"
+    ]
+  },
+  {
+    "name": "tc",
+    "files": [
+      "tc.bpf.c"
+    ]
+  },
+  {
+    "name": "tcpstates",
+    "files": [
+      "tcpstates.bpf.c",
+      "tcpstates.h"
+    ]
+  },
+  {
+    "name": "xdp",
+    "files": [
+      "xdp.bpf.c"
+    ]
+  }
+]
