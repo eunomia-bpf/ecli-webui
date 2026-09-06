@@ -2,7 +2,7 @@
     <!-- TODO: refactor ( a more simple way? -->
     <VueUploadComponent name="Upload file" @change="fileUploaded" drop="true"
         class="inline-flex items-center justify-center px-4 py-2 text-sm font-medium tracking-wide transition-all duration-300 ease-out rounded-md active:scale-95 cursor-pointer min-w-max ml-1 mr-2 bg-sprout-300 text-sprout-950 shadow hover:shadow-md hover:bg-sprout-400 hover:-translate-y-0.5">
-        <el-icon class="mr-1" size="16"><ArrowUpload20Regular /></el-icon>Upload
+        <span class="flex items-center justify-center h-full"><el-icon class="mr-1 mt-[2px]" size="16"><ArrowUpload20Regular /></el-icon>Upload</span>
     </VueUploadComponent>
 </template>
 
