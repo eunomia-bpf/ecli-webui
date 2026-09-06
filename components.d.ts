@@ -13,6 +13,7 @@ export {}
 declare module 'vue' {
   export interface GlobalComponents {
     EditorField: typeof import('./src/components/EditorField.vue')['default']
+    ElDialog: typeof import('element-plus/es')['ElDialog']
     ElIcon: typeof import('element-plus/es')['ElIcon']
     ElPopover: typeof import('element-plus/es')['ElPopover']
     FileUpload: typeof import('./src/components/FileUpload.vue')['default']
@@ -32,6 +33,7 @@ declare module 'vue' {
 // For TSX support
 declare global {
   const EditorField: typeof import('./src/components/EditorField.vue')['default']
+  const ElDialog: typeof import('element-plus/es')['ElDialog']
   const ElIcon: typeof import('element-plus/es')['ElIcon']
   const ElPopover: typeof import('element-plus/es')['ElPopover']
   const FileUpload: typeof import('./src/components/FileUpload.vue')['default']

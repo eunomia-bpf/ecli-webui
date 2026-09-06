@@ -38,6 +38,20 @@
 
                     <upload @update-standby="updateStandbyBinary" @add-to-tab="addToTab" />
 
+                    <div class="relative flex items-center">
+                        <select v-model="selectedExample" @change="loadExample" class="appearance-none bg-sprout-100 border border-sprout-200 text-sprout-950 text-sm font-medium rounded-md px-3 py-2 pr-8 focus:outline-none focus:border-sprout-400 cursor-pointer shadow-sm hover:shadow-md transition-shadow">
+                            <option value="" disabled selected>Load Example...</option>
+                            <option v-for="ex in examplesList" :key="ex.name" :value="ex.name">{{ ex.name }}</option>
+                        </select>
+                        <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-sprout-700">
+                            <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/></svg>
+                        </div>
+                    </div>
+                    
+                    <btn @click="viewFileSystem" title="View Virtual File System">
+                        <el-icon class="mr-1" size="16"><Folder20Regular /></el-icon>FS Info
+                    </btn>
+
                     <div class="flex justify-end gap-3 h-full flex-grow px-2 items-center">
                         <btn :disabled="downloadDisabled" @click="downloadProgram">
                             <el-icon class="mr-1" size="16"><ArrowDownload20Regular /></el-icon>Download
@@ -81,6 +95,34 @@
         </div>
 
     </div>
+    
+    <!-- Virtual FS Modal -->
+    <el-dialog v-model="showFsModal" title="Virtual File System (MEMFS)" width="50%" class="rounded-xl">
+        <div class="max-h-96 overflow-y-auto">
+            <table class="w-full text-left border-collapse">
+                <thead>
+                    <tr class="bg-slate-100 text-slate-600 text-sm">
+                        <th class="p-2 border-b border-slate-200">Name</th>
+                        <th class="p-2 border-b border-slate-200 w-24">Type</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr v-for="file in fsFiles" :key="file.name" class="hover:bg-slate-50 border-b border-slate-100 last:border-0">
+                        <td class="p-2 text-slate-800 flex items-center gap-2">
+                            <el-icon size="16" :color="file.isDir ? '#da8b5d' : '#6f9052'">
+                                <component :is="file.isDir ? 'Folder20Regular' : 'Document20Regular'" />
+                            </el-icon>
+                            {{ file.name }}
+                        </td>
+                        <td class="p-2 text-slate-500 text-sm">{{ file.isDir ? 'Directory' : 'File' }}</td>
+                    </tr>
+                    <tr v-if="fsFiles.length === 0">
+                        <td colspan="2" class="p-4 text-center text-slate-400">FS is empty or uninitialized</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </el-dialog>
 </template>
 
 
@@ -91,7 +133,9 @@ import {
     Archive48Regular,
     ArrowDownload20Regular,
     Play20Regular,
-    Wrench20Regular
+    Wrench20Regular,
+    Folder20Regular,
+    Document20Regular
 } from "@vicons/fluent";
 import Emception from "emception/emception.js"; // TODO: add a declare file for emception
 import {
@@ -181,6 +225,16 @@ onMounted(async () => {
         consoleCtx.value.push("Emception initialization failed: " + e);
         console.error("Emception init error:", e);
     }
+    
+    // Load examples list
+    try {
+        const res = await fetch('/examples.json');
+        if (res.ok) {
+            examplesList.value = await res.json();
+        }
+    } catch (e) {
+        console.error("Failed to load examples", e);
+    }
 });
 
 const servers = reactive([new Server("Local", "http://127.0.0.1:8527")]);
@@ -215,6 +269,54 @@ const consoleCtx: Ref<string[]> = ref(initialConsoleValue);
 const cleanConsole = async () => {
     consoleCtx.value = initialConsoleValue;
 };
+
+// --- Examples & FS Viewer ---
+const examplesList = ref<Array<{name: string, files: string[]}>>([]);
+const selectedExample = ref('');
+
+const loadExample = async () => {
+    const ex = examplesList.value.find(e => e.name === selectedExample.value);
+    if (!ex) return;
+    
+    for (const file of ex.files) {
+        try {
+            const res = await fetch(`/examples/${ex.name}/${file}`);
+            if (res.ok) {
+                const text = await res.text();
+                addToTab(file, text);
+            }
+        } catch (e) {
+            console.error(`Failed to load file ${file} from example ${ex.name}`);
+        }
+    }
+    consoleCtx.value.push(`Loaded example ${ex.name} into editor.`);
+};
+
+const showFsModal = ref(false);
+const fsFiles = ref<{name: string, isDir: boolean}[]>([]);
+
+const viewFileSystem = () => {
+    if (!(window as any).emception) {
+        alert("Virtual file system not initialized yet.");
+        return;
+    }
+    const emception = (window as any).emception;
+    try {
+        const items = emception.fileSystem.readdir('/');
+        fsFiles.value = items.filter((i: string) => i !== '.' && i !== '..').map((i: string) => {
+            const stat = emception.fileSystem.stat('/' + i);
+            return {
+                name: i,
+                isDir: emception.fileSystem.isDir(stat.mode)
+            };
+        }).sort((a: any, b: any) => (a.isDir === b.isDir ? 0 : a.isDir ? -1 : 1));
+        showFsModal.value = true;
+    } catch (e) {
+        console.error(e);
+        alert("Failed to read virtual file system");
+    }
+};
+// ----------------------------
 
 const downloadDisabled = computed(() => standbyBinary.value.program_data_buf === "");
 
