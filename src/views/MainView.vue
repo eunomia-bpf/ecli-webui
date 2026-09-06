@@ -310,13 +310,18 @@ const viewFileSystem = () => {
         return;
     }
     const emception = (window as any).emception;
+    const FS = emception.fileSystem.FS;
+    if (!FS) {
+        alert("FS object not available");
+        return;
+    }
     try {
-        const items = emception.fileSystem.readdir('/');
+        const items = FS.readdir('/');
         fsFiles.value = items.filter((i: string) => i !== '.' && i !== '..').map((i: string) => {
-            const stat = emception.fileSystem.stat('/' + i);
+            const stat = FS.stat('/' + i);
             return {
                 name: i,
-                isDir: emception.fileSystem.isDir(stat.mode)
+                isDir: FS.isDir(stat.mode)
             };
         }).sort((a: any, b: any) => (a.isDir === b.isDir ? 0 : a.isDir ? -1 : 1));
         showFsModal.value = true;
